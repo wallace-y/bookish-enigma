@@ -47,6 +47,22 @@ describe("Not found test", () => {
         expect(res.body.msg).toBe("Page not found.");
       });
   });
+  it("Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .get("/api/reviews/bananas")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Status 404, resource not found - invalid ID", () => {
+    return request(app)
+      .get("/api/reviews/999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found.");
+      });
+  });
 });
 
 describe("GET /api - return ALL api endpoints", () => {
@@ -81,6 +97,26 @@ describe("GET /api - return ALL api endpoints", () => {
               ],
             },
           },
+          "GET /api/reviews/:review_id": {
+            description: "serves an object of a single array",
+            queries: [],
+            exampleResponse: {
+              review: [
+                {
+                  review_id: "1",
+                  title: "Agricola",
+                  category: "euro game",
+                  designer: "Uwe Rosenberg",
+                  owner: "mallionaire",
+                  review_body: "Farmyard fun!",
+                  review_img_url:
+                    "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+                  created_at: "2021-01-18T10:00:20.514Z",
+                  votes: "1",
+                },
+              ],
+            },
+          },
         });
       });
   });
@@ -88,8 +124,51 @@ describe("GET /api - return ALL api endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
-        console.log(res.body);
-        expect(Object.keys(res.body).length).toEqual(2);
+        expect(Object.keys(res.body).length).toEqual(3);
+      });
+  });
+});
+
+describe("GET /api/reviews/:id - get review by ID", () => {
+  it("returns a status code of 200", () => {
+    return request(app).get("/api/reviews/1").expect(200);
+  });
+  it("is correctly formatted as JSON", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Response has the correct properties", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .then((res) => {
+        const review = res.body.review[0];
+        expect(review.hasOwnProperty("review_id")).toBe(true);
+        expect(review.hasOwnProperty("title")).toBe(true);
+        expect(review.hasOwnProperty("review_body")).toBe(true);
+        expect(review.hasOwnProperty("designer")).toBe(true);
+        expect(review.hasOwnProperty("review_img_url")).toBe(true);
+        expect(review.hasOwnProperty("votes")).toBe(true);
+        expect(review.hasOwnProperty("category")).toBe(true);
+        expect(review.hasOwnProperty("owner")).toBe(true);
+        expect(review.hasOwnProperty("created_at")).toBe(true);
+      });
+  });
+  it("Response has the correct properties types", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .then((res) => {
+        const review = res.body.review[0];
+
+        expect(typeof review["review_id"]).toBe("number");
+        expect(typeof review["title"]).toBe("string");
+        expect(typeof review["review_body"]).toBe("string");
+        expect(typeof review["designer"]).toBe("string");
+        expect(typeof review["review_img_url"]).toBe("string");
+        expect(typeof review["votes"]).toBe("number");
+        expect(typeof review["category"]).toBe("string");
+        expect(typeof review["owner"]).toBe("string");
+        expect(typeof review["created_at"]).toBe("string");
       });
   });
 });
