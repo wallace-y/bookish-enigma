@@ -1,9 +1,17 @@
 const express = require("express");
-const { getCategories } = require("./controllers/controllers.js");
+const {
+  getCategories,
+  getAllEndpoints,
+} = require("./controllers/controllers.js");
 const app = express();
 
 app.use(express.json());
 
+// all endpoints, endpoint
+app.get("/api", getAllEndpoints);
+
+
+// category endpoints
 app.get("/api/categories", getCategories);
 
 //error handling middleware
@@ -16,7 +24,7 @@ app.use("/api/*", (req, res) => {
 //handling 500 errors
 app.use((err, req, res, next) => {
   //handle custom errors later
-  if (err.status ** err.msg) {
+  if (err.status && err.msg) {
     res.status(err.status).end({ msg: err.msg });
   }
   // if the error hasn't been identified,
