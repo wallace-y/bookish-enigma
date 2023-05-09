@@ -5,7 +5,8 @@ function getCategories(req, res, next) {
     .query(`SELECT * FROM categories;`)
     .then((data) => {
       res.status(200).send(data.rows);
-    });
+    })
+    .catch(next);
 }
 
 module.exports = {
