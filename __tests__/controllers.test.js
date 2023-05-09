@@ -43,5 +43,9 @@ describe("Bad requests", () => {
     return request(app)
       .get("/api/notAnEndpoint")
       .expect(404)
+      .then((res) => {
+        expect(res.body.msg)
+        .toBe("Page not found.");
+      })
   });
 });
