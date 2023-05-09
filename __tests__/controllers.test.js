@@ -8,7 +8,7 @@ const testData = require("../db/data/test-data");
 beforeEach(() => seed(testData));
 afterAll(() => connection.end());
 
-xdescribe("GET /api/items", () => {
+describe("GET /api/items", () => {
   it("responds with an object containing all items", () => {
     return request(app).get("/api/categories");
   });
@@ -38,7 +38,7 @@ xdescribe("GET /api/items", () => {
   });
 });
 
-xdescribe("Bad requests", () => {
+describe("Not found test", () => {
   it("Status: 404, responds with an error message when passed an invalid path", () => {
     return request(app)
       .get("/api/notAnEndpoint")
