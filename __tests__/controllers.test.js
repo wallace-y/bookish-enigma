@@ -38,14 +38,58 @@ describe("GET /api/items", () => {
   });
 });
 
-describe("Bad requests", () => {
+describe("Not found test", () => {
   it("Status: 404, responds with an error message when passed an invalid path", () => {
     return request(app)
       .get("/api/notAnEndpoint")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg)
-        .toBe("Page not found.");
-      })
+        expect(res.body.msg).toBe("Page not found.");
+      });
+  });
+});
+
+describe("GET /api - return ALL api endpoints", () => {
+  it("returns a status code of 200", () => {
+    return request(app).get("/api").expect(200);
+  });
+  it("content is JSON", () => {
+    return request(app)
+      .get("/api")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("body of response is as expected", () => {
+    // test the contents of the file
+    return request(app)
+      .get("/api")
+      .then((res) => {
+        expect(res.body).toEqual({
+          "GET /api": {
+            description:
+              "serves up a json representation of all the available endpoints of the api",
+          },
+          "GET /api/categories": {
+            description: "serves an array of all categories",
+            queries: [],
+            exampleResponse: {
+              categories: [
+                {
+                  description:
+                    "Players attempt to uncover each other's hidden role",
+                  slug: "Social deduction",
+                },
+              ],
+            },
+          },
+        });
+      });
+  });
+  it("has the correct number of keys - ie one for each endpoint available", () => {
+    return request(app)
+      .get("/api")
+      .then((res) => {
+        console.log(res.body);
+        expect(Object.keys(res.body).length).toEqual(2);
+      });
   });
 });
