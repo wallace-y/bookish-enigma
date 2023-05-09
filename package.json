@@ -29,6 +29,7 @@
     "husky": "^8.0.2",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
+    "nodemon": "^2.0.22",
     "pg-format": "^1.0.4",
     "supertest": "^6.3.3"
   },
