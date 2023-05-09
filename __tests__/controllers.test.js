@@ -37,3 +37,11 @@ describe("GET /api/items", () => {
       });
   });
 });
+
+describe("Bad requests", () => {
+  it("Status: 404, responds with an error message when passed an invalid path", () => {
+    return request(app)
+      .get("/api/notAnEndpoint")
+      .expect(404)
+  });
+});
