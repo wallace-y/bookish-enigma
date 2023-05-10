@@ -1,5 +1,5 @@
 const connection = require("../db/connection.js");
-const { selectReviewById } = require("../models/models.js");
+const { selectReviewById, selectReviews } = require("../models/models.js");
 const fs = require("fs/promises");
 
 function getCategories(req, res, next) {
@@ -23,14 +23,25 @@ function getAllEndpoints(req, res, next) {
 
 function getReviewsById(req, res, next) {
   const { review_id } = req.params;
-  selectReviewById(review_id).then((review) => {
-    res.status(200).send({ review });
-  })
-  .catch(next);
+  selectReviewById(review_id)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch(next);
+}
+
+function getReviews(req, res, next) {
+  const { sort_by } = req.query;
+  selectReviews(sort_by)
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch(next);
 }
 
 module.exports = {
   getCategories,
   getAllEndpoints,
   getReviewsById,
+  getReviews,
 };

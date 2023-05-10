@@ -3,6 +3,7 @@ const {
   getCategories,
   getAllEndpoints,
   getReviewsById,
+  getReviews,
 } = require("./controllers/controllers.js");
 const app = express();
 
@@ -15,6 +16,7 @@ app.get("/api", getAllEndpoints);
 app.get("/api/categories", getCategories);
 
 //review endpoints
+app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 
 //error handling middleware
@@ -32,7 +34,7 @@ app.use((err, req, res, next) => {
   }
   //psql errors
   if (err.code === "22P02") {
-    res.status(400).send({msg: "Bad request."})
+    res.status(400).send({ msg: "Bad request." });
   }
   // if the error hasn't been identified,
   // respond with an internal server error
