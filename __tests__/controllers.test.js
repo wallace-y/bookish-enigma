@@ -1,4 +1,3 @@
-const { getCategories } = require("../controllers/controllers.js");
 const request = require("supertest");
 const app = require("../app.js");
 const connection = require("../db/connection.js");
@@ -117,6 +116,26 @@ describe("GET /api - return ALL api endpoints", () => {
               ],
             },
           },
+          "GET /api/reviews": {
+            description: "serves an array of all reviews",
+            queries: [],
+            exampleResponse: {
+              categories: [
+                {
+                  review_id: 13,
+                  owner: "mallionaire",
+                  title: "Settlers of Catan: Don't Settle For Less",
+                  category: "social deduction",
+                  review_img_url:
+                    "https://images.pexels.com/photos/1153929/pexels-photo-1153929.jpeg?w=700&h=700",
+                  created_at: "1970-01-10T02:08:38.400Z",
+                  votes: 16,
+                  designer: "Klaus Teuber",
+                  comment_count: 0,
+                },
+              ],
+            },
+          },
         });
       });
   });
@@ -124,7 +143,7 @@ describe("GET /api - return ALL api endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
-        expect(Object.keys(res.body).length).toEqual(3);
+        expect(Object.keys(res.body).length).toEqual(4);
       });
   });
 });
@@ -157,6 +176,60 @@ describe("GET /api/reviews/:id - get review by ID", () => {
             votes: 1,
           })
         );
+      });
+  });
+});
+
+describe("GET /api/reviews - get ALL reviews", () => {
+  it("returns a status code of 200", () => {
+    return request(app).get("/api/reviews").expect(200);
+  });
+  it("content is JSON", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Response has the correct properties", () => {
+    return request(app)
+      .get("/api/reviews")
+      .then((res) => {
+        //get all reviews
+        const review = res.body.reviews;
+        review.forEach((review) => {
+          expect(review.hasOwnProperty("owner")).toBe(true);
+          expect(review.hasOwnProperty("title")).toBe(true);
+          expect(review.hasOwnProperty("review_id")).toBe(true);
+          expect(review.hasOwnProperty("category")).toBe(true);
+          expect(review.hasOwnProperty("review_img_url")).toBe(true);
+          expect(review.hasOwnProperty("created_at")).toBe(true);
+          expect(review.hasOwnProperty("votes")).toBe(true);
+          expect(review.hasOwnProperty("designer")).toBe(true);
+          expect(review.hasOwnProperty("comment_count")).toBe(true);
+          expect(review.hasOwnProperty("review_body")).toBe(false);
+        });
+      });
+  });
+  it("Sorts the response by review_id as a default", () => {
+    return request(app)
+      .get("/api/reviews")
+      .then((res) => {
+        expect(res.body.reviews).toBeSortedBy("review_id");
+      });
+  });
+  it("Sorts the response by a given input (date), DESC", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=created_at")
+      .then((res) => {
+        expect(res.body.reviews).toBeSortedBy("created_at");
+        expect(res.body.reviews).toBeSorted({ descending: true });
+      });
+  });
+  it("400 - invalid sort query", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=potato")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid sort query.");
       });
   });
 });

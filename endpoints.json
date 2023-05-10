@@ -32,5 +32,24 @@
           }
         ] 
 }
+  },
+  "GET /api/reviews": {
+    "description": "serves an array of all reviews",
+    "queries": [],
+    "exampleResponse": {
+      "categories": [
+        {
+          "review_id": 13,
+          "owner": "mallionaire",
+          "title": "Settlers of Catan: Don't Settle For Less",
+          "category": "social deduction",
+          "review_img_url": "https://images.pexels.com/photos/1153929/pexels-photo-1153929.jpeg?w=700&h=700",
+          "created_at": "1970-01-10T02:08:38.400Z",
+          "votes": 16,
+          "designer": "Klaus Teuber",
+          "comment_count": 0
+        }
+      ]
+    }
   }
 }
