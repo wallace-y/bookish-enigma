@@ -21,7 +21,7 @@ function selectReviews(sort_by = "review_id") {
   return connection
     .query(
       `SELECT reviews.review_id, owner, title, category, review_img_url, 
-      reviews.created_at, reviews.votes, designer, count(comment_id) as comment_count FROM reviews LEFT JOIN comments on reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY reviews.${sort_by};`
+      reviews.created_at, reviews.votes, designer, CAST(count(comment_id) as INT) as comment_count FROM reviews LEFT JOIN comments on reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY reviews.${sort_by};`
     )
     .then((result) => {
       return result.rows;

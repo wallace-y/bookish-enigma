@@ -209,6 +209,25 @@ describe("GET /api/reviews - get ALL reviews", () => {
         });
       });
   });
+  it("Response has the correct properties TYPES", () => {
+    return request(app)
+      .get("/api/reviews")
+      .then((res) => {
+        //get all reviews
+        const review = res.body.reviews;
+        review.forEach((review) => {
+          expect(typeof review["owner"]).toBe("string");
+          expect(typeof review["title"]).toBe("string");
+          expect(typeof review["review_id"]).toBe("number");
+          expect(typeof review["category"]).toBe("string");
+          expect(typeof review["review_img_url"]).toBe("string");
+          expect(typeof review["created_at"]).toBe("string");
+          expect(typeof review["votes"]).toBe("number");
+          expect(typeof review["designer"]).toBe("string");
+          expect(typeof review["comment_count"]).toBe("number");
+        });
+      });
+  });
   it("Sorts the response by review_id as a default", () => {
     return request(app)
       .get("/api/reviews")
