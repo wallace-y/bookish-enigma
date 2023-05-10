@@ -143,32 +143,20 @@ describe("GET /api/reviews/:id - get review by ID", () => {
       .get("/api/reviews/1")
       .then((res) => {
         const review = res.body.review[0];
-        expect(review.hasOwnProperty("review_id")).toBe(true);
-        expect(review.hasOwnProperty("title")).toBe(true);
-        expect(review.hasOwnProperty("review_body")).toBe(true);
-        expect(review.hasOwnProperty("designer")).toBe(true);
-        expect(review.hasOwnProperty("review_img_url")).toBe(true);
-        expect(review.hasOwnProperty("votes")).toBe(true);
-        expect(review.hasOwnProperty("category")).toBe(true);
-        expect(review.hasOwnProperty("owner")).toBe(true);
-        expect(review.hasOwnProperty("created_at")).toBe(true);
-      });
-  });
-  it("Response has the correct properties types", () => {
-    return request(app)
-      .get("/api/reviews/1")
-      .then((res) => {
-        const review = res.body.review[0];
-
-        expect(typeof review["review_id"]).toBe("number");
-        expect(typeof review["title"]).toBe("string");
-        expect(typeof review["review_body"]).toBe("string");
-        expect(typeof review["designer"]).toBe("string");
-        expect(typeof review["review_img_url"]).toBe("string");
-        expect(typeof review["votes"]).toBe("number");
-        expect(typeof review["category"]).toBe("string");
-        expect(typeof review["owner"]).toBe("string");
-        expect(typeof review["created_at"]).toBe("string");
+        expect(review).toEqual(
+          expect.objectContaining({
+            review_id: 1,
+            title: "Agricola",
+            category: "euro game",
+            designer: "Uwe Rosenberg",
+            owner: "mallionaire",
+            review_body: "Farmyard fun!",
+            review_img_url:
+              "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+            created_at: "2021-01-18T10:00:20.514Z",
+            votes: 1,
+          })
+        );
       });
   });
 });
