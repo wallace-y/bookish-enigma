@@ -93,7 +93,7 @@ describe("GET /api - return ALL api endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
-        expect(Object.keys(res.body).length).toEqual(5);
+        expect(Object.keys(res.body).length).toEqual(6);
       });
   });
 });
