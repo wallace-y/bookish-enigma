@@ -2,6 +2,7 @@ const connection = require("../db/connection.js");
 const {
   selectReviewById,
   selectReviews,
+  addComment,
   selectComments,
 } = require("../models/models.js");
 const fs = require("fs/promises");
@@ -43,6 +44,17 @@ function getReviews(req, res, next) {
     .catch(next);
 }
 
+function postComment(req, res, next) {
+  const { review_id } = req.params;
+  const review = req.body;
+  //activate the model
+  addComment(review_id, review)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+}
+          
 function getComments(req, res, next) {
   const { review_id } = req.params;
 
@@ -58,5 +70,6 @@ module.exports = {
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  postComment,
   getComments,
 };

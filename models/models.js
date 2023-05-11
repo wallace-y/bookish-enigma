@@ -1,4 +1,5 @@
 const connection = require("../db/connection.js");
+const format = require("pg-format");
 const { checkReviewExists } = require("../db/seeds/utils.js");
 
 function selectReviewById(review_id) {
@@ -29,6 +30,24 @@ function selectReviews(sort_by = "review_id") {
     });
 }
 
+function addComment(review_id, review) {
+  if (review.username === undefined || review.body === undefined) {
+    return Promise.reject({ status: 400, msg: "Malformed body." });
+  }
+  const newComment = [review.username, review.body, review_id];
+  const query = format(
+    `INSERT INTO comments (author,body,review_id) VALUES %L RETURNING *;`,
+    [newComment]
+  );
+  return connection.query(query).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Resource not found." });
+    } else {
+      return result;
+    }
+  });
+}
+
 function selectComments(review_id) {
   const checkExists = checkReviewExists(review_id);
   const query = connection.query(
@@ -44,5 +63,6 @@ function selectComments(review_id) {
 module.exports = {
   selectReviewById,
   selectReviews,
+  addComment,
   selectComments,
 };

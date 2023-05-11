@@ -4,6 +4,7 @@ const {
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  postComment,
   getComments,
 } = require("./controllers/controllers.js");
 const app = express();
@@ -16,10 +17,17 @@ app.get("/api", getAllEndpoints);
 // category endpoints
 app.get("/api/categories", getCategories);
 
+
+//review get endpoints
+app.get("/api/reviews", getReviews);
+
 //review endpoints
 app.get("/api/reviews/:review_id/comments", getComments);
 app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews", getReviews);
+
+//review post endpoints
+app.post("/api/reviews/:review_id/comments", postComment);
 
 //error handling middleware
 
@@ -37,6 +45,10 @@ app.use((err, req, res, next) => {
   //psql errors
   if (err.code === "22P02") {
     res.status(400).send({ msg: "Bad request." });
+  }
+  //Key (<column-name>)=(XXX) is not present in table
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "Resource not found." });
   }
   // if the error hasn't been identified,
   // respond with an internal server error
