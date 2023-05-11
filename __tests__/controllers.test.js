@@ -286,7 +286,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
   });
 });
 
-describe("GET /api/reviews/:review_id/comments", () => {
+describe.only("GET /api/reviews/:review_id/comments", () => {
   it("returns a status code of 200", () => {
     return request(app).get("/api/reviews/1/comments").expect(200);
   });
@@ -294,6 +294,14 @@ describe("GET /api/reviews/:review_id/comments", () => {
     return request(app)
       .get("/api/reviews/1/comments")
       .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Returns a status code 200 - with an empty array (no comments)", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toEqual([]);
+      });
   });
   it("Response has the correct properties", () => {
     return request(app)
@@ -315,13 +323,13 @@ describe("GET /api/reviews/:review_id/comments", () => {
   });
   it("Response has the correct properties types", () => {
     return request(app)
-      .get("/api/reviews/1/comments")
+      .get("/api/reviews/2/comments")
       .then((res) => {
         //get all reviews
         const comments = res.body.comments;
         if (comments.length > 0) {
           comments.forEach((comment) => {
-            expect(typeof comment["comment_id"]).toBe("string");
+            expect(typeof comment["comment_id"]).toBe("number");
             expect(typeof comment["votes"]).toBe("number");
             expect(typeof comment["created_at"]).toBe("string");
             expect(typeof comment["author"]).toBe("string");
