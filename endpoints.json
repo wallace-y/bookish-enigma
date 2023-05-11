@@ -51,5 +51,22 @@
         }
       ]
     }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "posts a new comment to a specified review",
+    "queries": [],
+    "exampleResponse": 
+    {
+      "comment": [
+        {
+          "comment_id": 7,
+          "body": "I need more beans...",
+          "review_id": 1,
+          "author": "mallionaire",
+          "votes": 0,
+          "created_at": "2023-05-11T08:58:37.498Z"
+        }
+      ]
+    }
   }
 }

@@ -30,7 +30,6 @@ function selectReviews(sort_by = "review_id") {
 }
 
 function addComment(review_id, review) {
-  //check the review body has the right things
   if (review.username === undefined || review.comment === undefined) {
     return Promise.reject({ status: 400, msg: "Malformed body." });
   }

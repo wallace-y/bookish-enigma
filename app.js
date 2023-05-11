@@ -42,7 +42,6 @@ app.use((err, req, res, next) => {
   }
   // if the error hasn't been identified,
   // respond with an internal server error
-  console.log(err)
   res.status(500).send({ msg: "Internal Server Error" });
 });
 

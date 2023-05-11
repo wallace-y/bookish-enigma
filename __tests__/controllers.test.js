@@ -136,6 +136,22 @@ describe("GET /api - return ALL api endpoints", () => {
               ],
             },
           },
+          "POST /api/reviews/:review_id/comments": {
+            description: "posts a new comment to a specified review",
+            queries: [],
+            exampleResponse: {
+              comment: [
+                {
+                  comment_id: 7,
+                  body: "I need more beans...",
+                  review_id: 1,
+                  author: "mallionaire",
+                  votes: 0,
+                  created_at: "2023-05-11T08:58:37.498Z",
+                },
+              ],
+            },
+          },
         });
       });
   });
@@ -143,7 +159,7 @@ describe("GET /api - return ALL api endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
-        expect(Object.keys(res.body).length).toEqual(4);
+        expect(Object.keys(res.body).length).toEqual(5);
       });
   });
 });
@@ -253,7 +269,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
   });
 });
 
-describe.only("POST /api/reviews/:review_id/comments", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   const newComment = {
     username: "mallionaire",
     comment: "I need more beans...",
@@ -269,6 +285,22 @@ describe.only("POST /api/reviews/:review_id/comments", () => {
       .post("/api/reviews/1/comments")
       .send(newComment)
       .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("its responds with the comment object", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .then((res) => {
+        expect(res.body.comment[0].hasOwnProperty("comment_id")).toBe(true);
+        expect(res.body.comment[0].hasOwnProperty("body")).toBe(true);
+        expect(res.body.comment[0].hasOwnProperty("review_id")).toBe(true);
+        expect(res.body.comment[0].hasOwnProperty("author")).toBe(true);
+        expect(res.body.comment[0].hasOwnProperty("votes")).toBe(true);
+        expect(res.body.comment[0].hasOwnProperty("created_at")).toBe(true);
+        expect(res.body.comment[0]["review_id"]).toBe(1);
+        expect(res.body.comment[0]["author"]).toBe("mallionaire");
+        expect(res.body.comment[0]["body"]).toBe("I need more beans...");
+      });
   });
   it("Correctly adds a new comment to the endpoint", () => {
     return request(app)
