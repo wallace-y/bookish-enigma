@@ -37,7 +37,7 @@ describe("GET /api/items", () => {
   });
 });
 
-describe("Not found test", () => {
+describe("Not found tests", () => {
   it("Status: 404, responds with an error message when passed an invalid path", () => {
     return request(app)
       .get("/api/notAnEndpoint")
@@ -60,6 +60,22 @@ describe("Not found test", () => {
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Resource not found.");
+      });
+  });
+  it("Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .get("/api/reviews/bananas/comments")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Status 404, resource not found - invalid ID", () => {
+    return request(app)
+      .get("/api/reviews/999999/comments")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Review not found.");
       });
   });
 });
@@ -120,7 +136,7 @@ describe("GET /api - return ALL api endpoints", () => {
             description: "serves an array of all reviews",
             queries: [],
             exampleResponse: {
-              categories: [
+              review: [
                 {
                   review_id: 13,
                   owner: "mallionaire",
@@ -136,6 +152,23 @@ describe("GET /api - return ALL api endpoints", () => {
               ],
             },
           },
+          "GET /api/reviews/:review_id/comments": {
+            description:
+              "serves an array of all comments of a particular review",
+            queries: [],
+            exampleResponse: {
+              comments: [
+                {
+                  comment_id: 1,
+                  votes: 16,
+                  created_at: "2017-11-22T12:43:33.389Z",
+                  author: "bainesface",
+                  body: "I loved this game too!",
+                  review_id: 2,
+                },
+              ],
+            },
+          },
         });
       });
   });
@@ -143,7 +176,7 @@ describe("GET /api - return ALL api endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
-        expect(Object.keys(res.body).length).toEqual(4);
+        expect(Object.keys(res.body).length).toEqual(5);
       });
   });
 });
@@ -249,6 +282,96 @@ describe("GET /api/reviews - get ALL reviews", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Invalid sort query.");
+      });
+  });
+});
+
+describe.only("GET /api/reviews/:review_id/comments", () => {
+  it("returns a status code of 200", () => {
+    return request(app).get("/api/reviews/1/comments").expect(200);
+  });
+  it("content is JSON", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Returns a status code 200 - with an empty array (no comments)", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toEqual([]);
+      });
+  });
+  it("Response has the correct properties", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .then((res) => {
+        //get all reviews
+        const comments = res.body.comments;
+        if (comments.length > 0) {
+          comments.forEach((comment) => {
+            expect(comment.hasOwnProperty("comment_id")).toBe(true);
+            expect(comment.hasOwnProperty("votes")).toBe(true);
+            expect(comment.hasOwnProperty("created_at")).toBe(true);
+            expect(comment.hasOwnProperty("author")).toBe(true);
+            expect(comment.hasOwnProperty("body")).toBe(true);
+            expect(comment.hasOwnProperty("review_id")).toBe(true);
+          });
+        }
+      });
+  });
+  it("Response has the correct properties types", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .then((res) => {
+        //get all reviews
+        const comments = res.body.comments;
+        if (comments.length > 0) {
+          comments.forEach((comment) => {
+            expect(typeof comment["comment_id"]).toBe("number");
+            expect(typeof comment["votes"]).toBe("number");
+            expect(typeof comment["created_at"]).toBe("string");
+            expect(typeof comment["author"]).toBe("string");
+            expect(typeof comment["body"]).toBe("string");
+            expect(typeof comment["review_id"]).toBe("number");
+          });
+        }
+      });
+  });
+  it("Should return the correct response shape and properties", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .then((res) => {
+        const comments = res.body.comments;
+        expect(comments).toEqual(
+          expect.objectContaining([
+            {
+              comment_id: 1,
+              votes: 16,
+              created_at: "2017-11-22T12:43:33.389Z",
+              author: "bainesface",
+              body: "I loved this game too!",
+              review_id: 2,
+            },
+            {
+              comment_id: 4,
+              votes: 16,
+              created_at: "2017-11-22T12:36:03.389Z",
+              author: "bainesface",
+              body: "EPIC board game!",
+              review_id: 2,
+            },
+            {
+              comment_id: 5,
+              votes: 13,
+              created_at: "2021-01-18T10:24:05.410Z",
+              author: "mallionaire",
+              body: "Now this is a story all about how, board games turned my life upside down",
+              review_id: 2,
+            },
+          ])
+        );
       });
   });
 });
