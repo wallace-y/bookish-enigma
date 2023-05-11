@@ -1,5 +1,9 @@
 const connection = require("../db/connection.js");
-const { selectReviewById, selectReviews } = require("../models/models.js");
+const {
+  selectReviewById,
+  selectReviews,
+  updateReviewById,
+} = require("../models/models.js");
 const fs = require("fs/promises");
 
 function getCategories(req, res, next) {
@@ -39,9 +43,20 @@ function getReviews(req, res, next) {
     .catch(next);
 }
 
+function patchReviewsById(req, res, next) {
+  const { review_id } = req.params;
+  const update = req.body;
+  updateReviewById(review_id, update)
+    .then((review) => {
+      res.status(202).send({ review });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getCategories,
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  patchReviewsById,
 };
