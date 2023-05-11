@@ -1,5 +1,6 @@
 const connection = require("../db/connection.js");
 const format = require("pg-format");
+const { checkReviewExists } = require("../db/seeds/utils.js");
 
 function selectReviewById(review_id) {
   return connection
@@ -47,8 +48,21 @@ function addComment(review_id, review) {
   });
 }
 
+function selectComments(review_id) {
+  const checkExists = checkReviewExists(review_id);
+  const query = connection.query(
+    `SELECT comment_id,comments.votes,comments.created_at,comments.author,comments.body,comments.review_id FROM comments WHERE comments.review_id = $1;`,
+    [review_id]
+  );
+
+  return Promise.all([checkExists, query]).then((result) => {
+    return result[1].rows;
+  });
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
   addComment,
+  selectComments,
 };

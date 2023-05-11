@@ -3,6 +3,7 @@ const {
   selectReviewById,
   selectReviews,
   addComment,
+  selectComments,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -53,6 +54,16 @@ function postComment(req, res, next) {
     })
     .catch(next);
 }
+          
+function getComments(req, res, next) {
+  const { review_id } = req.params;
+
+  selectComments(review_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+}
 
 module.exports = {
   getCategories,
@@ -60,4 +71,5 @@ module.exports = {
   getReviewsById,
   getReviews,
   postComment,
+  getComments,
 };
