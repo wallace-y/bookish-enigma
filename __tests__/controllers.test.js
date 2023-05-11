@@ -272,7 +272,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
 describe("POST /api/reviews/:review_id/comments", () => {
   const newComment = {
     username: "mallionaire",
-    comment: "I need more beans...",
+    body: "I need more beans...",
   };
   it("returns a status code of 201", () => {
     return request(app)
@@ -291,44 +291,68 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .post("/api/reviews/1/comments")
       .send(newComment)
       .then((res) => {
-        expect(res.body.comment[0].hasOwnProperty("comment_id")).toBe(true);
-        expect(res.body.comment[0].hasOwnProperty("body")).toBe(true);
-        expect(res.body.comment[0].hasOwnProperty("review_id")).toBe(true);
-        expect(res.body.comment[0].hasOwnProperty("author")).toBe(true);
-        expect(res.body.comment[0].hasOwnProperty("votes")).toBe(true);
-        expect(res.body.comment[0].hasOwnProperty("created_at")).toBe(true);
-        expect(res.body.comment[0]["review_id"]).toBe(1);
-        expect(res.body.comment[0]["author"]).toBe("mallionaire");
-        expect(res.body.comment[0]["body"]).toBe("I need more beans...");
+        const comment = res.body.comment.rows[0];
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: 7,
+            body: "I need more beans...",
+            review_id: 1,
+            author: "mallionaire",
+            votes: 0,
+          })
+        );
+
+        expect(res.body.comment.rows[0].hasOwnProperty("created_at")).toBe(
+          true
+        );
       });
   });
-  it("Correctly adds a new comment to the endpoint", () => {
+  it("missing username: handles a malformed body as a 400 error", () => {
     return request(app)
       .post("/api/reviews/1/comments")
-      .send(newComment)
-      .then(() => {
-        connection
-          .query(`SELECT * FROM comments WHERE review_id = 1;`)
-          .then((result) => {
-            expect(result.rows[0].hasOwnProperty("comment_id")).toBe(true);
-            expect(result.rows[0].hasOwnProperty("body")).toBe(true);
-            expect(result.rows[0].hasOwnProperty("review_id")).toBe(true);
-            expect(result.rows[0].hasOwnProperty("author")).toBe(true);
-            expect(result.rows[0].hasOwnProperty("votes")).toBe(true);
-            expect(result.rows[0].hasOwnProperty("created_at")).toBe(true);
-            expect(result.rows[0]["review_id"]).toBe(1);
-            expect(result.rows[0]["author"]).toBe("mallionaire");
-            expect(result.rows[0]["body"]).toBe("I need more beans...");
-          });
-      });
-  });
-  it("handles a malformed body as a 400 error", () => {
-    return request(app)
-      .post("/api/reviews/1/comments")
-      .send({})
+      .send({ body: "I need more beans..." })
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing body: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({ username: "mallionaire" })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .post("/api/reviews/bananas/comments")
+      .send(newComment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Status: 404, responds with an error message when passed an invalid path", () => {
+    return request(app)
+      .post("/api/reviews/999999/comments")
+      .send(newComment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found.");
+      });
+  });
+  it("Status: 404. Username is valid but doesn't exist.", () => {
+    const thisIsANewComment = {
+      username: "potatoMan",
+      body: "What is taters???",
+    };
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(thisIsANewComment)
+      .expect((res) => {
+        expect(res.body.msg).toBe("Resource not found.");
       });
   });
 });
