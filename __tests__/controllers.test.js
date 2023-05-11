@@ -178,19 +178,26 @@ describe("GET /api/reviews - get ALL reviews", () => {
         });
       });
   });
-  it("Sorts the response by review_id as a default", () => {
+  it("Sorts the response by created_at as default", () => {
     return request(app)
       .get("/api/reviews")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("review_id");
+        expect(res.body.reviews).toBeSortedBy("created_at",{ descending: true });
       });
   });
-  it("Sorts the response by a given input (date), DESC", () => {
+  it("Sorts the response date, DESC if not specified", () => {
     return request(app)
       .get("/api/reviews?sort_by=created_at")
       .then((res) => {
+        expect(res.body.reviews).toBeSortedBy("created_at",{ descending: true });
+      });
+  });
+  it("Sorts the response date, ASC if specified", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=created_at&order=ASC")
+      .then((res) => {
         expect(res.body.reviews).toBeSortedBy("created_at");
-        expect(res.body.reviews).toBeSorted({ descending: true });
+        expect(res.body.reviews).toBeSorted({ ascending: true });
       });
   });
   it("400 - invalid sort query", () => {
@@ -199,6 +206,22 @@ describe("GET /api/reviews - get ALL reviews", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Invalid sort query.");
+      });
+  });
+  it("400 - invalid order query", () => {
+    return request(app)
+      .get("/api/reviews?order=potato")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid order query.");
+      });
+  });
+  it("400 - invalid order query", () => {
+    return request(app)
+      .get("/api/reviews?category=potato")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Category not found.");
       });
   });
 });
@@ -380,4 +403,3 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-

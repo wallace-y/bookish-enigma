@@ -36,8 +36,8 @@ function getReviewsById(req, res, next) {
 }
 
 function getReviews(req, res, next) {
-  const { sort_by } = req.query;
-  selectReviews(sort_by)
+  const { sort_by, order, category } = req.query;
+  selectReviews(sort_by, order, category)
     .then((reviews) => {
       res.status(200).send({ reviews });
     })
@@ -54,7 +54,7 @@ function postComment(req, res, next) {
     })
     .catch(next);
 }
-          
+
 function getComments(req, res, next) {
   const { review_id } = req.params;
 
