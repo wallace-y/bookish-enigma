@@ -47,7 +47,7 @@ function updateReviewById(review_id, update) {
           [newVotes, review_id]
         )
         .then(({ rows }) => {
-          return rows;
+          return rows[0];
         });
     });
 }
