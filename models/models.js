@@ -1,6 +1,5 @@
 const format = require("pg-format");
 const connection = require("../db/connection.js");
-const format = require("pg-format");
 const { checkReviewExists } = require("../db/seeds/utils.js");
 
 function selectReviewById(review_id) {

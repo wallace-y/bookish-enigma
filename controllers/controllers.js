@@ -66,15 +66,15 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
-function getReviewsById(req, res, next) {
+function patchReviewsById(req, res, next) {
   const { review_id } = req.params;
-  selectReviewById(review_id)
+  const update = req.body;
+  updateReviewById(review_id, update)
     .then((review) => {
-      res.status(200).send({ review });
+      res.status(202).send({ review });
     })
     .catch(next);
 }
-
 
 module.exports = {
   getCategories,
