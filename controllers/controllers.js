@@ -3,6 +3,8 @@ const {
   selectReviewById,
   selectReviews,
   updateReviewById,
+  addComment,
+  selectComments,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -43,15 +45,36 @@ function getReviews(req, res, next) {
     .catch(next);
 }
 
-function patchReviewsById(req, res, next) {
+function postComment(req, res, next) {
   const { review_id } = req.params;
-  const update = req.body;
-  updateReviewById(review_id, update)
-    .then((review) => {
-      res.status(202).send({ review });
+  const review = req.body;
+  //activate the model
+  addComment(review_id, review)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch(next);
 }
+
+function getComments(req, res, next) {
+  const { review_id } = req.params;
+
+  selectComments(review_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+}
+
+function getReviewsById(req, res, next) {
+  const { review_id } = req.params;
+  selectReviewById(review_id)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch(next);
+}
+
 
 module.exports = {
   getCategories,
@@ -59,4 +82,6 @@ module.exports = {
   getReviewsById,
   getReviews,
   patchReviewsById,
+  postComment,
+  getComments,
 };
