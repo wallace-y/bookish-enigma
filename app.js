@@ -6,6 +6,7 @@ const {
   getReviews,
   postComment,
   getComments,
+  getUsers
 } = require("./controllers/controllers.js");
 const app = express();
 
@@ -17,6 +18,9 @@ app.get("/api", getAllEndpoints);
 // category endpoints
 app.get("/api/categories", getCategories);
 
+
+// users endpoints
+app.get("/api/users", getUsers);
 
 //review get endpoints
 app.get("/api/reviews", getReviews);

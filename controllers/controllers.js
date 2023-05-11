@@ -54,7 +54,7 @@ function postComment(req, res, next) {
     })
     .catch(next);
 }
-          
+
 function getComments(req, res, next) {
   const { review_id } = req.params;
 
@@ -65,6 +65,15 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
+function getUsers(req, res, next) {
+  return connection
+    .query(`SELECT username,name,avatar_url FROM users;`)
+    .then(({ rows }) => {
+      const users = rows;
+      res.status(200).send(users);
+    })
+    .catch(next);
+}
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -72,4 +81,5 @@ module.exports = {
   getReviews,
   postComment,
   getComments,
+  getUsers,
 };

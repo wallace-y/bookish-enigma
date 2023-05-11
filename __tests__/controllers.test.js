@@ -381,3 +381,58 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  it("responds with a status code 200", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  it("content is JSON", () => {
+    return request(app)
+      .get("/api/users")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("object has properties slug and description", () => {
+    return request(app)
+      .get("/api/users")
+      .then((res) => {
+        expect(res.body).toEqual(
+          expect.objectContaining([
+            {
+              username: "mallionaire",
+              name: "haz",
+              avatar_url:
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+            },
+            {
+              username: "philippaclaire9",
+              name: "philippa",
+              avatar_url:
+                "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+            },
+            {
+              username: "bainesface",
+              name: "sarah",
+              avatar_url:
+                "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+            },
+            {
+              username: "dav3rid",
+              name: "dave",
+              avatar_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            },
+          ])
+        );
+      });
+  });
+  it("object has properties with correct var type", () => {
+    return request(app)
+      .get("/api/users")
+      .then((res) => {
+        res.body.forEach((user) => {
+          expect(typeof user.username).toEqual("string");
+          expect(typeof user.name).toEqual("string");
+          expect(typeof user.avatar_url).toEqual("string");
+        });
+      });
+  });
+});
