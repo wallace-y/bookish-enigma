@@ -1,6 +1,9 @@
 const connection = require("../db/connection.js");
 const format = require("pg-format");
-const { checkReviewExists } = require("../db/seeds/utils.js");
+const {
+  checkReviewExists,
+  checkCommentExists,
+} = require("../db/seeds/utils.js");
 
 function selectReviewById(review_id) {
   return connection
@@ -60,9 +63,22 @@ function selectComments(review_id) {
   });
 }
 
+function removeComment(comment_id) {
+  const checkExists = checkCommentExists(comment_id);
+  const query = connection.query(
+    `DELETE FROM comments WHERE comment_id = $1 RETURNING *;`,
+    [comment_id]
+  );
+
+  return Promise.all([checkExists, query]).then((result) => {
+    return result[1];
+  });
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
   addComment,
   selectComments,
+  removeComment,
 };

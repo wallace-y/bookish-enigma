@@ -381,3 +381,31 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
+describe("DELETE /api/comments/:comment_id", () => {
+  it("😊 responds with a 204 message", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  it("😊 there is no content...", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .then((res) => {
+        expect(res.body).toEqual({})
+      })
+  });
+  it("😭 Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .delete("/api/comments/bananas")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("😭 Status: 404, responds with an error message when passed an invalid path", () => {
+    return request(app)
+      .delete("/api/comments/999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Comment not found.");
+      });
+  });
+});

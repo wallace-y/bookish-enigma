@@ -6,6 +6,7 @@ const {
   getReviews,
   postComment,
   getComments,
+  deleteComment,
 } = require("./controllers/controllers.js");
 const app = express();
 
@@ -16,7 +17,6 @@ app.get("/api", getAllEndpoints);
 
 // category endpoints
 app.get("/api/categories", getCategories);
-
 
 //review get endpoints
 app.get("/api/reviews", getReviews);
@@ -29,8 +29,10 @@ app.get("/api/reviews", getReviews);
 //review post endpoints
 app.post("/api/reviews/:review_id/comments", postComment);
 
-//error handling middleware
+//delete endpoints
+app.delete("/api/comments/:comment_id", deleteComment);
 
+//error handling middleware
 //handling 404 errors - no available endpoint
 app.use("/api/*", (req, res) => {
   res.status(404).send({ msg: "Page not found." });
@@ -54,7 +56,6 @@ app.use((err, req, res, next) => {
   // respond with an internal server error
   else {
     res.status(500).send({ msg: "Internal Server Error" });
-
   }
 });
 

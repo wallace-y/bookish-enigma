@@ -4,6 +4,7 @@ const {
   selectReviews,
   addComment,
   selectComments,
+  removeComment,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -54,13 +55,24 @@ function postComment(req, res, next) {
     })
     .catch(next);
 }
-          
+
 function getComments(req, res, next) {
   const { review_id } = req.params;
 
   selectComments(review_id)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+}
+
+function deleteComment(req, res, next) {
+  const { comment_id } = req.params;
+
+  removeComment(comment_id)
+    .then(({rows}) => {
+      const deletedComment = rows; 
+      res.status(204).send({ deletedComment });
     })
     .catch(next);
 }
@@ -72,4 +84,5 @@ module.exports = {
   getReviews,
   postComment,
   getComments,
+  deleteComment,
 };
