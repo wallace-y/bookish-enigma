@@ -252,3 +252,51 @@ describe("GET /api/reviews - get ALL reviews", () => {
       });
   });
 });
+
+describe.only("POST /api/reviews/:review_id/comments", () => {
+  const newComment = {
+    username: "mallionaire",
+    comment: "I need more beans...",
+  };
+  it("returns a status code of 201", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(201);
+  });
+  it("is correctly formatted as JSON", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Correctly adds a new comment to the endpoint", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .then(() => {
+        connection
+          .query(`SELECT * FROM comments WHERE review_id = 1;`)
+          .then((result) => {
+            expect(result.rows[0].hasOwnProperty("comment_id")).toBe(true);
+            expect(result.rows[0].hasOwnProperty("body")).toBe(true);
+            expect(result.rows[0].hasOwnProperty("review_id")).toBe(true);
+            expect(result.rows[0].hasOwnProperty("author")).toBe(true);
+            expect(result.rows[0].hasOwnProperty("votes")).toBe(true);
+            expect(result.rows[0].hasOwnProperty("created_at")).toBe(true);
+            expect(result.rows[0]["review_id"]).toBe(1);
+            expect(result.rows[0]["author"]).toBe("mallionaire");
+            expect(result.rows[0]["body"]).toBe("I need more beans...");
+          });
+      });
+  });
+  it("handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({})
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+});

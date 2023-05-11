@@ -1,4 +1,5 @@
 const connection = require("../db/connection.js");
+const format = require("pg-format");
 
 function selectReviewById(review_id) {
   return connection
@@ -28,7 +29,23 @@ function selectReviews(sort_by = "review_id") {
     });
 }
 
+function addComment(review_id, review) {
+  //check the review body has the right things
+  if (review.username === undefined || review.comment === undefined) {
+    return Promise.reject({ status: 400, msg: "Malformed body." });
+  }
+  const newComment = [review.username, review.comment, review_id];
+  const query = format(
+    `INSERT INTO comments (author,body,review_id) VALUES %L RETURNING *;`,
+    [newComment]
+  );
+  return connection.query(query).then((result) => {
+    return result.rows;
+  });
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
+  addComment,
 };

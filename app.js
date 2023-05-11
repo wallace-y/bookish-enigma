@@ -4,6 +4,7 @@ const {
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  postComment,
 } = require("./controllers/controllers.js");
 const app = express();
 
@@ -15,9 +16,12 @@ app.get("/api", getAllEndpoints);
 // category endpoints
 app.get("/api/categories", getCategories);
 
-//review endpoints
+//review get endpoints
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
+
+//review post endpoints
+app.post("/api/reviews/:review_id/comments", postComment);
 
 //error handling middleware
 
@@ -38,6 +42,7 @@ app.use((err, req, res, next) => {
   }
   // if the error hasn't been identified,
   // respond with an internal server error
+  console.log(err)
   res.status(500).send({ msg: "Internal Server Error" });
 });
 
