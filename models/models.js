@@ -18,7 +18,7 @@ function selectReviewById(review_id) {
 }
 
 function selectReviews(sort_by = "created_at", order = "DESC", category) {
-  const validSortQueries = ["review_id", "created_at"];
+  const validSortQueries = ["review_id", "created_at","title","designer","owner","category","votes"];
   const validOrderQueries = ["ASC", "DESC"];
   const validCategories = checkValidCategory(category); // TBC
 
