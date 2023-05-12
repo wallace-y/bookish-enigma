@@ -70,9 +70,7 @@ function removeComment(comment_id) {
     [comment_id]
   );
 
-  return Promise.all([checkExists, query]).then((result) => {
-    return result[1];
-  });
+  return Promise.all([checkExists, query]);
 }
 
 module.exports = {

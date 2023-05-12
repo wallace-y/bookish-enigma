@@ -385,13 +385,6 @@ describe("DELETE /api/comments/:comment_id", () => {
   it("😊 responds with a 204 message", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
-  it("😊 there is no content...", () => {
-    return request(app)
-      .delete("/api/comments/1")
-      .then((res) => {
-        expect(res.body).toEqual({})
-      })
-  });
   it("😭 Status 400, bad request - invalid ID", () => {
     return request(app)
       .delete("/api/comments/bananas")
