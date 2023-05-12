@@ -4,6 +4,7 @@ const {
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  patchReviewsById,
   postComment,
   getComments,
   deleteComment,
@@ -28,6 +29,7 @@ app.get("/api/reviews", getReviews);
 
 //review post endpoints
 app.post("/api/reviews/:review_id/comments", postComment);
+app.patch("/api/reviews/:review_id", patchReviewsById);
 
 //delete endpoints
 app.delete("/api/comments/:comment_id", deleteComment);
