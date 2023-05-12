@@ -3,6 +3,7 @@ const {
   checkReviewExists,
   checkValidCategory,
   checkCommentExists,
+  checkUserExists,
 } = require("../db/seeds/utils.js");
 const connection = require("../db/connection.js");
 
@@ -32,7 +33,7 @@ function selectReviews(sort_by = "created_at", order = "DESC", category) {
     "votes",
   ];
   const validOrderQueries = ["ASC", "DESC"];
-  const validCategories = checkValidCategory(category); // TBC
+  const validCategories = checkValidCategory(category);
 
   if (!validSortQueries.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Invalid sort query." });
@@ -169,6 +170,58 @@ function updateCommentById(comment_id, update) {
     });
 }
 
+function addReview(review) {
+  //checks that all required fields exists
+  if (
+    review.title === undefined ||
+    review.designer === undefined ||
+    review.owner === undefined ||
+    review.review_body === undefined ||
+    review.category === undefined
+  ) {
+    return Promise.reject({ status: 400, msg: "Malformed body." });
+  }
+
+  //checks the category of the review is valid
+  const validCategories = checkValidCategory(review.category);
+
+  //check user is valid too...
+  const validUser = checkUserExists(review.owner);
+
+  //formats the review ready to insert into the table
+  const newReview = [
+    review.title,
+    review.designer,
+    review.owner,
+    review.review_img_url || "https://placebear.com/700/700",
+    review.review_body,
+    review.category,
+  ];
+  const query = format(
+    `INSERT INTO reviews (title,designer,owner,review_img_url,review_body,category) VALUES %L RETURNING *;`,
+    [newReview]
+  );
+
+  const addValidReview = connection
+    .query(query)
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Resource not found." });
+      } else {
+        return result.rows[0].review_id;
+      }
+    })
+    .then((review_id) => {
+      return selectReviewById(review_id);
+    });
+
+  return Promise.all([validCategories, validUser, addValidReview]).then(
+    (result) => {
+      return result[2][0];
+    }
+  );
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
@@ -178,4 +231,5 @@ module.exports = {
   removeComment,
   selectUserByUsername,
   updateCommentById,
+  addReview,
 };

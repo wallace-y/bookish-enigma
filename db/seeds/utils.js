@@ -53,3 +53,12 @@ exports.checkCommentExists = (comment_id) => {
     });
 };
 
+exports.checkUserExists = (username) => {
+  return connection
+    .query(`SELECT * FROM users WHERE username = $1;`, [username])
+    .then((result) => {
+      if (result.rows.length === 0 && username) {
+        return Promise.reject({ status: 404, msg: "User not found." });
+      }
+    });
+};
