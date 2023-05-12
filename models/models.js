@@ -1,7 +1,8 @@
 const format = require("pg-format");
 const {
   checkReviewExists,
-  checkCommentExists,
+  checkValidCategory,
+  checkCommentExists
 } = require("../db/seeds/utils.js");
 const connection = require("../db/connection.js");
 
@@ -20,20 +21,45 @@ function selectReviewById(review_id) {
     });
 }
 
-function selectReviews(sort_by = "review_id") {
-  const validSortQueries = ["review_id", "created_at"];
+function selectReviews(sort_by = "created_at", order = "DESC", category) {
+  const validSortQueries = ["review_id", "created_at","title","designer","owner","category","votes"];
+  const validOrderQueries = ["ASC", "DESC"];
+  const validCategories = checkValidCategory(category); // TBC
+
   if (!validSortQueries.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Invalid sort query." });
   }
 
-  return connection
-    .query(
-      `SELECT reviews.review_id, owner, title, category, review_img_url, 
-      reviews.created_at, reviews.votes, designer, CAST(count(comment_id) as INT) as comment_count FROM reviews LEFT JOIN comments on reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY reviews.${sort_by};`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+  if (!validOrderQueries.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query." });
+  }
+
+  const queryValues = [];
+  let queryStr = `SELECT reviews.review_id, owner, title, category, review_img_url, 
+  reviews.created_at, reviews.votes, designer, CAST(count(comment_id) as INT) as comment_count FROM reviews LEFT JOIN comments on reviews.review_id = comments.review_id`;
+
+  if (category) {
+    queryValues.push(category);
+    queryStr += ` WHERE category = $1`;
+  }
+
+  queryStr+= ` GROUP BY reviews.review_id`
+
+  if (sort_by) {
+    queryStr += ` ORDER BY reviews.${sort_by}`;
+  }
+
+  if (order) {
+    queryStr += ` ${order};`;
+  } else {
+    queryStr += ";";
+  }
+
+  const queryReview = connection.query(queryStr, queryValues);
+
+  return Promise.all([validCategories, queryReview]).then((result) => {
+    return result[1].rows;
+  });
 }
 
 function addComment(review_id, review) {

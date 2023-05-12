@@ -60,3 +60,47 @@ To run tests for this project, follow these steps:
 ```
 npm test
 ```
+
+## Minimum Versions
+The following minimum versions are required to run the project successfully.
+- Node.js >=6.9.0
+
+## File Structure
+
+```
+.
+├── app.js
+├── controllers
+│   └── controllers.js
+├── db
+│   ├── connection.js
+│   ├── data
+│   │   ├── development-data
+│   │   │   ├── categories.js
+│   │   │   ├── comments.js
+│   │   │   ├── index.js
+│   │   │   ├── reviews.js
+│   │   │   └── users.js
+│   │   └── test-data
+│   │       ├── categories.js
+│   │       ├── comments.js
+│   │       ├── index.js
+│   │       ├── reviews.js
+│   │       └── users.js
+│   ├── seeds
+│   │   ├── run-seed.js
+│   │   ├── seed.js
+│   │   └── utils.js
+│   └── setup.sql
+├── endpoints.json
+├── error-handling.md
+├── listen.js
+├── models
+│   └── models.js
+├── package.json
+├── package-lock.json
+├── README.md
+└── __tests__
+    ├── controllers.test.js
+    └── utils.test.js
+```

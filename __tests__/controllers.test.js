@@ -201,19 +201,30 @@ describe("GET /api/reviews - get ALL reviews", () => {
         });
       });
   });
-  it("Sorts the response by review_id as a default", () => {
+  it("Sorts the response by created_at as default", () => {
     return request(app)
       .get("/api/reviews")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("review_id");
+        expect(res.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
-  it("Sorts the response by a given input (date), DESC", () => {
+  it("Sorts the response date, DESC if not specified", () => {
     return request(app)
       .get("/api/reviews?sort_by=created_at")
       .then((res) => {
+        expect(res.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  it("Sorts the response date, ASC if specified", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=created_at&order=ASC")
+      .then((res) => {
         expect(res.body.reviews).toBeSortedBy("created_at");
-        expect(res.body.reviews).toBeSorted({ descending: true });
+        expect(res.body.reviews).toBeSorted({ ascending: true });
       });
   });
   it("400 - invalid sort query", () => {
@@ -222,6 +233,33 @@ describe("GET /api/reviews - get ALL reviews", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Invalid sort query.");
+      });
+  });
+  it("400 - invalid order query", () => {
+    return request(app)
+      .get("/api/reviews?order=potato")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid order query.");
+      });
+  });
+  it("404 - non-existent category", () => {
+    return request(app)
+      .get("/api/reviews?category=potato")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Category not found.");
+      });
+  });
+  it("200 - accepts valid category query", () => {
+    return request(app).get("/api/reviews?category=dexterity").expect(200);
+  });
+  it("200 - accepts valid category query, but there are no reviews so returns empty array", () => {
+    return request(app)
+      .get("/api/reviews?category=children's+games")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews).toEqual([]);
       });
   });
 });
@@ -404,7 +442,10 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe("PATCH  /api/reviews/:review_id - update id", () => {
+
+  
+
+ describe("PATCH  /api/reviews/:review_id - update id", () => {
   const update = { inc_votes: 1 };
   it("Respond with a 202 - accepted update", () => {
     return request(app).patch("/api/reviews/1").send(update).expect(202);
@@ -496,3 +537,61 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+ 
+describe("GET /api/users", () => {
+  it("responds with a status code 200", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  it("content is JSON", () => {
+    return request(app)
+      .get("/api/users")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("object has properties slug and description", () => {
+    return request(app)
+      .get("/api/users")
+      .then((res) => {
+        expect(res.body).toEqual(
+          expect.objectContaining([
+            {
+              username: "mallionaire",
+              name: "haz",
+              avatar_url:
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+            },
+            {
+              username: "philippaclaire9",
+              name: "philippa",
+              avatar_url:
+                "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+            },
+            {
+              username: "bainesface",
+              name: "sarah",
+              avatar_url:
+                "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+            },
+            {
+              username: "dav3rid",
+              name: "dave",
+              avatar_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            },
+          ])
+        );
+      });
+  });
+  it("object has properties with correct var type", () => {
+    return request(app)
+      .get("/api/users")
+      .then((res) => {
+        res.body.forEach((user) => {
+          expect(typeof user.username).toEqual("string");
+          expect(typeof user.name).toEqual("string");
+          expect(typeof user.avatar_url).toEqual("string");
+        });
+      });
+  });
+});
+
+
