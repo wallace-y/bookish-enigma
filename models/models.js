@@ -103,7 +103,6 @@ function removeComment(comment_id) {
 }
 
 function updateReviewById(review_id, update) {
-  //update the damn thing
 
   return connection
     .query(`SELECT votes FROM reviews WHERE review_id = $1`, [review_id])

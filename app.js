@@ -23,9 +23,6 @@ app.get("/api/categories", getCategories);
 // users endpoints
 app.get("/api/users", getUsers);
 
-//review get endpoints
-app.get("/api/reviews", getReviews);
-
 //review endpoints
 app.get("/api/reviews/:review_id/comments", getComments);
 app.get("/api/reviews/:review_id", getReviewsById);
@@ -33,6 +30,8 @@ app.get("/api/reviews", getReviews);
 
 //review post endpoints
 app.post("/api/reviews/:review_id/comments", postComment);
+
+//patch endpoints
 app.patch("/api/reviews/:review_id", patchReviewsById);
 
 //delete endpoints

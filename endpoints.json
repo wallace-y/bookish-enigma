@@ -14,61 +14,74 @@
       ]
     }
   },
-  "GET /api/reviews/:review_id": {
-    "description": "serves an object of a single array",
+  "GET /api/users": {
+    "description": "serves an array of all users",
     "queries": [],
     "exampleResponse": {
-      "review": [
-          {
-            "review_id": "1",
-            "title": "Agricola",
-            "category": "euro game",
-            "designer": "Uwe Rosenberg",
-            "owner": "mallionaire",
-            "review_body": "Farmyard fun!",
-            "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-            "created_at": "2021-01-18T10:00:20.514Z",
-            "votes": "1"
-          }
-        ] 
-}
-  },
-  "GET /api/reviews": {
-    "description": "serves an array of all reviews",
-    "queries": [],
-    "exampleResponse": {
-      "review": [
+      "categories": [
         {
-          "review_id": 13,
-          "owner": "mallionaire",
-          "title": "Settlers of Catan: Don't Settle For Less",
-          "category": "social deduction",
-          "review_img_url": "https://images.pexels.com/photos/1153929/pexels-photo-1153929.jpeg?w=700&h=700",
-          "created_at": "1970-01-10T02:08:38.400Z",
-          "votes": 16,
-          "designer": "Klaus Teuber",
-          "comment_count": 0
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url":
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        },
+        {
+          "username": "philippaclaire9",
+          "name": "philippa",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        },
+        {
+          "username": "bainesface",
+          "name": "sarah",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+        },
+        {
+          "username": "dav3rid",
+          "name": "dave",
+          "avatar_url":
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
         }
       ]
     }
+  },
+  "GET /api/reviews": {
+    "description": "serves an array of all reviews",
+    "queries": ["sort_by","order","category"],
+    "exampleResponse": {
+      "review": [
+        {"review_id":14,
+        "owner":"cooljmessy",
+        "title":"Velit tempor ullamco amet ipsum dolor voluptate.",
+        "category":"hidden-roles",
+        "review_img_url":"https://images.pexels.com/photos/8111357/pexels-photo-8111357.jpeg?w=700&h=700",
+        "created_at":"2021-02-05T11:27:26.563Z",
+        "votes":3,
+        "designer":"Don Keigh",
+        "comment_count":0
+      },
+        {"review_id":13,
+        "owner":"tickle122",
+        "title":"Kerplunk; Don't lose your marbles",
+        "category":"dexterity",
+        "review_img_url":"https://images.pexels.com/photos/411207/pexels-photo-411207.jpeg?w=700&h=700",
+        "created_at":"2021-01-25T11:16:54.963Z",
+        "votes":9,
+        "designer":"Avery Wunzboogerz",
+        "comment_count":3}
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves an object of a single array",
+    "queries": [],
+    "exampleResponse": {"review":[{"review_id":1,"title":"Culture a Love of Agriculture With Agricola","designer":"Uwe Rosenberg","owner":"tickle122","review_img_url":"https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700","review_body":"You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!","category":"strategy","created_at":"2021-01-18T10:00:20.514Z","votes":1,"comment_count":3}]}
   },
   "GET /api/reviews/:review_id/comments": {
     "description": "serves an array of all comments of a particular review",
     "queries": [],
-    "exampleResponse": {
-      "comments": [
-        {
-          "comment_id": 1,
-          "votes": 16,
-          "created_at": "2017-11-22T12:43:33.389Z",
-          "author": "bainesface",
-          "body": "I loved this game too!",
-          "review_id": 2
-        }
-      ]
-    }
+    "exampleResponse": {"comments":[{"comment_id":59,"votes":3,"created_at":"2021-03-27T19:48:58.110Z","author":"jessjelly","body":"Quis duis mollit ad enim deserunt.","review_id":1},{"comment_id":60,"votes":17,"created_at":"2021-03-27T14:15:38.110Z","author":"cooljmessy","body":"Laboris nostrud ea ex occaecat aute quis consectetur anim.","review_id":1},{"comment_id":61,"votes":1,"created_at":"2021-03-27T14:15:36.110Z","author":"weegembump","body":"Consequat nisi dolor nulla esse sunt eu ipsum laborum deserunt duis. Ffugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat?","review_id":1}]}
   },
-    "POST /api/reviews/:review_id/comments": {
+  "POST /api/reviews/:review_id/comments": {
     "description": "posts a new comment to a specified review",
     "queries": [],
     "exampleResponse": 
@@ -84,5 +97,27 @@
         }
       ]
     }
+  },
+  "PATCH /api/reviews/:review_id/comments": {
+    "description": "updates a comment of a specified review to increase the vote count",
+    "queries": [],
+    "exampleResponse": 
+    {
+      "comment": [
+        {
+          "comment_id": 7,
+          "body": "I need more beans...",
+          "review_id": 1,
+          "author": "mallionaire",
+          "votes": 1, 
+          "created_at": "2023-05-11T08:58:37.498Z"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "delete a specified comment",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
