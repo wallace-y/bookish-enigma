@@ -67,6 +67,16 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
+function getUsers(req, res, next) {
+  return connection
+    .query(`SELECT username,name,avatar_url FROM users;`)
+    .then(({ rows }) => {
+      const users = rows;
+      res.status(200).send(users);
+    })
+    .catch(next);
+}
+
 function deleteComment(req, res, next) {
   const { comment_id } = req.params;
 
@@ -89,6 +99,8 @@ function patchReviewsById(req, res, next) {
 }
 
 
+
+
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -97,5 +109,6 @@ module.exports = {
   patchReviewsById,
   postComment,
   getComments,
+  getUsers,
   deleteComment,
 };
