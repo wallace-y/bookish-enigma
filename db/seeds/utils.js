@@ -42,3 +42,14 @@ exports.checkValidCategory = (category) => {
       }
     });
 };
+
+exports.checkCommentExists = (comment_id) => {
+  return connection
+    .query(`SELECT * FROM comments WHERE comment_id = $1;`, [comment_id])
+    .then((result) => {
+      if (result.rows.length === 0 && comment_id) {
+        return Promise.reject({ status: 404, msg: "Comment not found." });
+      }
+    });
+};
+

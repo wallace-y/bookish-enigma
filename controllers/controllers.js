@@ -2,8 +2,10 @@ const connection = require("../db/connection.js");
 const {
   selectReviewById,
   selectReviews,
+  updateReviewById,
   addComment,
   selectComments,
+  removeComment,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -65,11 +67,48 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
+function getUsers(req, res, next) {
+  return connection
+    .query(`SELECT username,name,avatar_url FROM users;`)
+    .then(({ rows }) => {
+      const users = rows;
+      res.status(200).send(users);
+    })
+    .catch(next);
+}
+
+function deleteComment(req, res, next) {
+  const { comment_id } = req.params;
+
+  removeComment(comment_id)
+    .then(({rows}) => {
+      const deletedComment = rows; 
+      res.status(204).send({ deletedComment });
+    })
+    .catch(next);
+}
+
+function patchReviewsById(req, res, next) {
+  const { review_id } = req.params;
+  const update = req.body;
+  updateReviewById(review_id, update)
+    .then((review) => {
+      res.status(202).send({ review });
+    })
+    .catch(next);
+}
+
+
+
+
 module.exports = {
   getCategories,
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  patchReviewsById,
   postComment,
   getComments,
+  getUsers,
+  deleteComment,
 };

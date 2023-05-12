@@ -1,13 +1,106 @@
-# Northcoders House of Games API
+# House of Games API
 
-## Setup
-You will need to create two .env files: 
+Link to hosted site [here](https://game-reviews-8ld1.onrender.com).
 
-1. .env.test
-2. .env.development. 
+## Summary
 
-Into each, add PGDATABASE=<database_name_here> as follows: 
-* .env.test: PGDATABASE=nc_games_test
-* .env.development: PGDATABASE=nc_games
+This project is a API for a game reviews. It is built with Node.js and Express, using a PostgreSQL database to store and retrieve data. The API allows users to create, read, update and delete data for various endpoints, including users, reviews, comments and categories.
 
-Double check that these .env files are .gitignored.
+## Clone and Setup Instructions
+
+1. Install Node.js and PostgreSQL on your machine, if they are not already installed.
+2. Clone the repository to your local machine using the following command:
+
+```
+git clone https://github.com/wallace-y/bookish-enigma.git
+```
+
+3. Install dependencies by running the following command in the project's root folder:
+
+```
+npm install
+```
+
+4. Create the necessary databases by running the following command:
+
+```
+npm run setup-dbs
+```
+
+5. Seed the development database with data by running the following command:
+
+```
+npm run seed
+```
+
+6. Create two .env files in the project's root folder: **.env.test** and **.env.development.**
+7. Add **PGDATABASE=<database_name_here>** to each .env file, as follows:
+
+   - .env.test: **PGDATABASE=nc_games_test**
+   - .env.development: **PGDATABASE=nc_games**
+
+   **Note: Ensure that both .env files are .gitignored.**
+
+## Starting the server
+
+1. Start the server by running the following command:
+
+```
+npm start
+```
+
+## Running Tests
+
+To run tests for this project, follow these steps:
+
+1. Ensure that you have followed the setup instructions above, including creating the .env.test file.
+
+2. Run the following command to execute the tests:
+
+```
+npm test
+```
+
+## Minimum Versions
+The following minimum versions are required to run the project successfully.
+- Node.js >=6.9.0
+
+## File Structure
+
+```
+.
+├── app.js
+├── controllers
+│   └── controllers.js
+├── db
+│   ├── connection.js
+│   ├── data
+│   │   ├── development-data
+│   │   │   ├── categories.js
+│   │   │   ├── comments.js
+│   │   │   ├── index.js
+│   │   │   ├── reviews.js
+│   │   │   └── users.js
+│   │   └── test-data
+│   │       ├── categories.js
+│   │       ├── comments.js
+│   │       ├── index.js
+│   │       ├── reviews.js
+│   │       └── users.js
+│   ├── seeds
+│   │   ├── run-seed.js
+│   │   ├── seed.js
+│   │   └── utils.js
+│   └── setup.sql
+├── endpoints.json
+├── error-handling.md
+├── listen.js
+├── models
+│   └── models.js
+├── package.json
+├── package-lock.json
+├── README.md
+└── __tests__
+    ├── controllers.test.js
+    └── utils.test.js
+```
