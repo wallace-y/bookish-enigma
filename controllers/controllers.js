@@ -6,6 +6,7 @@ const {
   addComment,
   selectComments,
   removeComment,
+  selectUserByUsername,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -81,8 +82,8 @@ function deleteComment(req, res, next) {
   const { comment_id } = req.params;
 
   removeComment(comment_id)
-    .then(({rows}) => {
-      const deletedComment = rows; 
+    .then(({ rows }) => {
+      const deletedComment = rows;
       res.status(204).send({ deletedComment });
     })
     .catch(next);
@@ -98,8 +99,14 @@ function patchReviewsById(req, res, next) {
     .catch(next);
 }
 
-
-
+function getUsersByUsername(req, res, next) {
+  const { username } = req.params;
+  selectUserByUsername(username)
+    .then((user) => {
+      res.status(200).send({ user });
+    })
+    .catch(next);
+}
 
 module.exports = {
   getCategories,
@@ -111,4 +118,5 @@ module.exports = {
   getComments,
   getUsers,
   deleteComment,
+  getUsersByUsername,
 };

@@ -442,10 +442,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
-
-  
-
- describe("PATCH  /api/reviews/:review_id - update id", () => {
+describe("PATCH  /api/reviews/:review_id - update id", () => {
   const update = { inc_votes: 1 };
   it("Respond with a 202 - accepted update", () => {
     return request(app).patch("/api/reviews/1").send(update).expect(202);
@@ -537,7 +534,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
- 
+
 describe("GET /api/users", () => {
   it("responds with a status code 200", () => {
     return request(app).get("/api/users").expect(200);
@@ -594,4 +591,35 @@ describe("GET /api/users", () => {
   });
 });
 
-
+describe.only("GET /api/users/:username", () => {
+  it("responds with a status code 200", () => {
+    return request(app).get("/api/users/mallionaire").expect(200);
+  });
+  it("content is JSON", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("object has properties slug and description", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .then((res) => {
+        expect(res.body.user).toEqual(
+          expect.objectContaining({
+            username: "mallionaire",
+            name: "haz",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          })
+        );
+      });
+  });
+  it("responds with a status code 404 where username doesn't exists", () => {
+    return request(app)
+      .get("/api/users/notAusername")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("User not found.");
+      });
+  });
+});

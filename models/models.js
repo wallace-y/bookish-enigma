@@ -2,7 +2,7 @@ const format = require("pg-format");
 const {
   checkReviewExists,
   checkValidCategory,
-  checkCommentExists
+  checkCommentExists,
 } = require("../db/seeds/utils.js");
 const connection = require("../db/connection.js");
 
@@ -22,7 +22,15 @@ function selectReviewById(review_id) {
 }
 
 function selectReviews(sort_by = "created_at", order = "DESC", category) {
-  const validSortQueries = ["review_id", "created_at","title","designer","owner","category","votes"];
+  const validSortQueries = [
+    "review_id",
+    "created_at",
+    "title",
+    "designer",
+    "owner",
+    "category",
+    "votes",
+  ];
   const validOrderQueries = ["ASC", "DESC"];
   const validCategories = checkValidCategory(category); // TBC
 
@@ -43,7 +51,7 @@ function selectReviews(sort_by = "created_at", order = "DESC", category) {
     queryStr += ` WHERE category = $1`;
   }
 
-  queryStr+= ` GROUP BY reviews.review_id`
+  queryStr += ` GROUP BY reviews.review_id`;
 
   if (sort_by) {
     queryStr += ` ORDER BY reviews.${sort_by}`;
@@ -103,7 +111,6 @@ function removeComment(comment_id) {
 }
 
 function updateReviewById(review_id, update) {
-
   return connection
     .query(`SELECT votes FROM reviews WHERE review_id = $1`, [review_id])
     .then((result) => {
@@ -124,6 +131,18 @@ function updateReviewById(review_id, update) {
     });
 }
 
+function selectUserByUsername(username) {
+  return connection
+    .query(`SELECT * FROM users WHERE username = $1;`, [username])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "User not found." });
+      } else {
+        return rows[0];
+      }
+    });
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
@@ -131,4 +150,5 @@ module.exports = {
   addComment,
   selectComments,
   removeComment,
+  selectUserByUsername,
 };
