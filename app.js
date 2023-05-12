@@ -1,41 +1,26 @@
 const express = require("express");
-const {
-  getCategories,
-  getAllEndpoints,
-  getReviewsById,
-  getReviews,
-  patchReviewsById,
-  postComment,
-  getComments,
-  getUsers,
-  deleteComment
-} = require("./controllers/controllers.js");
 const app = express();
+const apiRouter = require("./routes/api-router.js");
+const userRouter = require("./routes/user-router.js");
+const categoryRouter = require("./routes/category-router.js");
+const reviewRouter = require("./routes/reviews-router.js");
+const commentRouter = require("./routes/comments-router.js");
 
 app.use(express.json());
 
-// all endpoints, endpoint
-app.get("/api", getAllEndpoints);
+app.use("/api", apiRouter);
 
 // category endpoints
-app.get("/api/categories", getCategories);
+apiRouter.use("/categories", categoryRouter);
 
 // users endpoints
-app.get("/api/users", getUsers);
+apiRouter.use("/users", userRouter);
 
 //review endpoints
-app.get("/api/reviews/:review_id/comments", getComments);
-app.get("/api/reviews/:review_id", getReviewsById);
-app.get("/api/reviews", getReviews);
+apiRouter.use("/reviews", reviewRouter);
 
-//review post endpoints
-app.post("/api/reviews/:review_id/comments", postComment);
-
-//patch endpoints
-app.patch("/api/reviews/:review_id", patchReviewsById);
-
-//delete endpoints
-app.delete("/api/comments/:comment_id", deleteComment);
+//comment endpoints
+apiRouter.use("/comments", commentRouter);
 
 //error handling middleware
 //handling 404 errors - no available endpoint
