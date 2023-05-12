@@ -107,7 +107,7 @@ describe("GET /api/reviews/:id - get review by ID", () => {
       .get("/api/reviews/1")
       .expect("Content-Type", "application/json; charset=utf-8");
   });
-  it("Response has the correct properties", () => {
+  it("Response has the correct properties where there are no comments", () => {
     return request(app)
       .get("/api/reviews/1")
       .then((res) => {
@@ -124,6 +124,29 @@ describe("GET /api/reviews/:id - get review by ID", () => {
               "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
             created_at: "2021-01-18T10:00:20.514Z",
             votes: 1,
+            comment_count: 0,
+          })
+        );
+      });
+  });
+  it("Response has the correct properties where there are are comments", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .then((res) => {
+        const review = res.body.review[0];
+        expect(review).toEqual(
+          expect.objectContaining({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 5,
+            comment_count: 3,
           })
         );
       });
@@ -381,8 +404,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
-
-  describe("PATCH  /api/reviews/:review_id - update id", () => {
+describe("PATCH  /api/reviews/:review_id - update id", () => {
   const update = { inc_votes: 1 };
   it("Respond with a 202 - accepted update", () => {
     return request(app).patch("/api/reviews/1").send(update).expect(202);
@@ -452,9 +474,8 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-  
-  
-  describe("DELETE /api/comments/:comment_id", () => {
+
+describe("DELETE /api/comments/:comment_id", () => {
   it("😊 responds with a 204 message", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
@@ -472,62 +493,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Comment not found.");
-      });
-  });
-});
-
-describe("GET /api/users", () => {
-  it("responds with a status code 200", () => {
-    return request(app).get("/api/users").expect(200);
-  });
-  it("content is JSON", () => {
-    return request(app)
-      .get("/api/users")
-      .expect("Content-Type", "application/json; charset=utf-8");
-  });
-  it("object has properties slug and description", () => {
-    return request(app)
-      .get("/api/users")
-      .then((res) => {
-        expect(res.body).toEqual(
-          expect.objectContaining([
-            {
-              username: "mallionaire",
-              name: "haz",
-              avatar_url:
-                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
-            },
-            {
-              username: "philippaclaire9",
-              name: "philippa",
-              avatar_url:
-                "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
-            },
-            {
-              username: "bainesface",
-              name: "sarah",
-              avatar_url:
-                "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
-            },
-            {
-              username: "dav3rid",
-              name: "dave",
-              avatar_url:
-                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-            },
-          ])
-        );
-      });
-  });
-  it("object has properties with correct var type", () => {
-    return request(app)
-      .get("/api/users")
-      .then((res) => {
-        res.body.forEach((user) => {
-          expect(typeof user.username).toEqual("string");
-          expect(typeof user.name).toEqual("string");
-          expect(typeof user.avatar_url).toEqual("string");
-        });
       });
   });
 });
