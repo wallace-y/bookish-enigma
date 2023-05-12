@@ -381,11 +381,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
-    
-    
-    
-    
-describe("PATCH  /api/reviews/:review_id - update id", () => {
+  describe("PATCH  /api/reviews/:review_id - update id", () => {
   const update = { inc_votes: 1 };
   it("Respond with a 202 - accepted update", () => {
     return request(app).patch("/api/reviews/1").send(update).expect(202);
@@ -455,3 +451,28 @@ describe("PATCH  /api/reviews/:review_id - update id", () => {
       });
   });
 });
+  
+  
+  describe("DELETE /api/comments/:comment_id", () => {
+  it("😊 responds with a 204 message", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  it("😭 Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .delete("/api/comments/bananas")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("😭 Status: 404, responds with an error message when passed an invalid path", () => {
+    return request(app)
+      .delete("/api/comments/999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Comment not found.");
+      });
+  });
+});
+
+  

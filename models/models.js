@@ -1,6 +1,10 @@
 const format = require("pg-format");
+const {
+  checkReviewExists,
+  checkCommentExists,
+} = require("../db/seeds/utils.js");
 const connection = require("../db/connection.js");
-const { checkReviewExists } = require("../db/seeds/utils.js");
+
 
 function selectReviewById(review_id) {
   return connection
@@ -60,6 +64,16 @@ function selectComments(review_id) {
   });
 }
 
+function removeComment(comment_id) {
+  const checkExists = checkCommentExists(comment_id);
+  const query = connection.query(
+    `DELETE FROM comments WHERE comment_id = $1 RETURNING *;`,
+    [comment_id]
+  );
+
+  return Promise.all([checkExists, query]);
+}
+
 function updateReviewById(review_id, update) {
   //update the damn thing
 
@@ -83,11 +97,11 @@ function updateReviewById(review_id, update) {
     });
 }
 
-
 module.exports = {
   selectReviewById,
   selectReviews,
   updateReviewById,
   addComment,
   selectComments,
+  removeComment,
 };

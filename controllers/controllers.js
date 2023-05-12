@@ -5,6 +5,7 @@ const {
   updateReviewById,
   addComment,
   selectComments,
+  removeComment,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -66,6 +67,17 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
+function deleteComment(req, res, next) {
+  const { comment_id } = req.params;
+
+  removeComment(comment_id)
+    .then(({rows}) => {
+      const deletedComment = rows; 
+      res.status(204).send({ deletedComment });
+    })
+    .catch(next);
+}
+
 function patchReviewsById(req, res, next) {
   const { review_id } = req.params;
   const update = req.body;
@@ -76,6 +88,7 @@ function patchReviewsById(req, res, next) {
     .catch(next);
 }
 
+
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -84,4 +97,5 @@ module.exports = {
   patchReviewsById,
   postComment,
   getComments,
+  deleteComment,
 };
