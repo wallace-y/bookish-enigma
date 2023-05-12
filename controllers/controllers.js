@@ -7,6 +7,7 @@ const {
   selectComments,
   removeComment,
   selectUserByUsername,
+  updateCommentById,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -108,6 +109,16 @@ function getUsersByUsername(req, res, next) {
     .catch(next);
 }
 
+function patchCommentById(req, res, next) {
+  const { comment_id } = req.params;
+  const update = req.body;
+  updateCommentById(comment_id, update)
+    .then((comment) => {
+      res.status(202).send({ comment });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -119,4 +130,5 @@ module.exports = {
   getUsers,
   deleteComment,
   getUsersByUsername,
+  patchCommentById,
 };

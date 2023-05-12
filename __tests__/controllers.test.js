@@ -623,3 +623,99 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH  /api/comments/:comment_id - update id", () => {
+  const update = { inc_votes: 1 };
+  it("Respond with a 202 - accepted update", () => {
+    return request(app).patch("/api/comments/1").send(update).expect(202);
+  });
+  it("Responds with content of the correct type", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send(update)
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Responds with an object of the correctly updated item", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send(update)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: 1,
+            body: "I loved this game too!",
+            votes: 17,
+            author: "bainesface",
+            review_id: 2,
+            created_at: "2017-11-22T12:43:33.389Z",
+          })
+        );
+      });
+  });
+  it("DOES NOT update the DB when no parameters are provided", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send()
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Gives a BAD REQUEST status and message when the update object is incomplete", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ theWrongThing: 1 })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Gives a resource not found status and message when the id is an invalid number", () => {
+    return request(app)
+      .patch("/api/comments/999999")
+      .send(update)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found.");
+      });
+  });
+  it("Gives a resource not found status and message when the id is not a number", () => {
+    return request(app)
+      .patch("/api/comments/bananas")
+      .send(update)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Does not decrement the count of votes past 0 if negative...", () => {
+    const negativeUpdate = { inc_votes: -100 };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(negativeUpdate)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: 1,
+            body: "I loved this game too!",
+            votes: 0,
+            author: "bainesface",
+            review_id: 2,
+            created_at: "2017-11-22T12:43:33.389Z",
+          })
+        );
+      });
+  });
+  it("Prevents incrementing if the amount is not a number ", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "bananas" })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+});
