@@ -7,8 +7,8 @@ const {
   patchReviewsById,
   postComment,
   getComments,
-  getUsers
-  deleteComment,
+  getUsers,
+  deleteComment
 } = require("./controllers/controllers.js");
 const app = express();
 
