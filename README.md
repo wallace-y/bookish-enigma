@@ -60,6 +60,11 @@ To run tests for this project, follow these steps:
 ```
 npm test
 ```
+
+## Minimum Versions
+The following minimum versions are required to run the project successfully.
+- Node.js >=6.9.0
+
 ## File Structure
 
 ```
