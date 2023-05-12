@@ -178,19 +178,30 @@ describe("GET /api/reviews - get ALL reviews", () => {
         });
       });
   });
-  it("Sorts the response by review_id as a default", () => {
+  it("Sorts the response by created_at as default", () => {
     return request(app)
       .get("/api/reviews")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("review_id");
+        expect(res.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
-  it("Sorts the response by a given input (date), DESC", () => {
+  it("Sorts the response date, DESC if not specified", () => {
     return request(app)
       .get("/api/reviews?sort_by=created_at")
       .then((res) => {
+        expect(res.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  it("Sorts the response date, ASC if specified", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=created_at&order=ASC")
+      .then((res) => {
         expect(res.body.reviews).toBeSortedBy("created_at");
-        expect(res.body.reviews).toBeSorted({ descending: true });
+        expect(res.body.reviews).toBeSorted({ ascending: true });
       });
   });
   it("400 - invalid sort query", () => {
@@ -199,6 +210,33 @@ describe("GET /api/reviews - get ALL reviews", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Invalid sort query.");
+      });
+  });
+  it("400 - invalid order query", () => {
+    return request(app)
+      .get("/api/reviews?order=potato")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid order query.");
+      });
+  });
+  it("404 - non-existent category", () => {
+    return request(app)
+      .get("/api/reviews?category=potato")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Category not found.");
+      });
+  });
+  it("200 - accepts valid category query", () => {
+    return request(app).get("/api/reviews?category=dexterity").expect(200);
+  });
+  it("200 - accepts valid category query, but there are no reviews so returns empty array", () => {
+    return request(app)
+      .get("/api/reviews?category=children's+games")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews).toEqual([]);
       });
   });
 });
@@ -380,7 +418,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-
 
   describe("PATCH  /api/reviews/:review_id - update id", () => {
   const update = { inc_votes: 1 };
