@@ -93,7 +93,7 @@ describe("GET /api - return ALL api endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
-        expect(Object.keys(res.body).length).toEqual(9);
+        expect(Object.keys(res.body).length).toEqual(10);
       });
   });
 });
@@ -591,7 +591,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe.only("GET /api/users/:username", () => {
+describe("GET /api/users/:username", () => {
   it("responds with a status code 200", () => {
     return request(app).get("/api/users/mallionaire").expect(200);
   });
