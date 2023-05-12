@@ -182,14 +182,18 @@ describe("GET /api/reviews - get ALL reviews", () => {
     return request(app)
       .get("/api/reviews")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("created_at",{ descending: true });
+        expect(res.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
   it("Sorts the response date, DESC if not specified", () => {
     return request(app)
       .get("/api/reviews?sort_by=created_at")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("created_at",{ descending: true });
+        expect(res.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
   it("Sorts the response date, ASC if specified", () => {
@@ -216,12 +220,23 @@ describe("GET /api/reviews - get ALL reviews", () => {
         expect(res.body.msg).toBe("Invalid order query.");
       });
   });
-  it("400 - invalid order query", () => {
+  it("404 - non-existent category", () => {
     return request(app)
       .get("/api/reviews?category=potato")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Category not found.");
+      });
+  });
+  it("200 - accepts valid category query", () => {
+    return request(app).get("/api/reviews?category=dexterity").expect(200);
+  });
+  it("200 - accepts valid category query, but there are no reviews so returns empty array", () => {
+    return request(app)
+      .get("/api/reviews?category=children's+games")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews).toEqual([]);
       });
   });
 });

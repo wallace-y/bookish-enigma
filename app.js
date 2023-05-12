@@ -17,7 +17,6 @@ app.get("/api", getAllEndpoints);
 // category endpoints
 app.get("/api/categories", getCategories);
 
-
 //review get endpoints
 app.get("/api/reviews", getReviews);
 
@@ -54,7 +53,6 @@ app.use((err, req, res, next) => {
   // respond with an internal server error
   else {
     res.status(500).send({ msg: "Internal Server Error" });
-
   }
 });
 

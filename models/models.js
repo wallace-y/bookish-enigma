@@ -32,12 +32,14 @@ function selectReviews(sort_by = "created_at", order = "DESC", category) {
 
   const queryValues = [];
   let queryStr = `SELECT reviews.review_id, owner, title, category, review_img_url, 
-  reviews.created_at, reviews.votes, designer, CAST(count(comment_id) as INT) as comment_count FROM reviews LEFT JOIN comments on reviews.review_id = comments.review_id GROUP BY reviews.review_id`;
+  reviews.created_at, reviews.votes, designer, CAST(count(comment_id) as INT) as comment_count FROM reviews LEFT JOIN comments on reviews.review_id = comments.review_id`;
 
   if (category) {
     queryValues.push(category);
-    queryStr += `WHERE column_name = $1`;
+    queryStr += ` WHERE category = $1`;
   }
+
+  queryStr+= ` GROUP BY reviews.review_id`
 
   if (sort_by) {
     queryStr += ` ORDER BY reviews.${sort_by}`;
@@ -48,7 +50,6 @@ function selectReviews(sort_by = "created_at", order = "DESC", category) {
   } else {
     queryStr += ";";
   }
-
 
   const queryReview = connection.query(queryStr, queryValues);
 
