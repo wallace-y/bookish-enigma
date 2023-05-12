@@ -6,10 +6,12 @@ const {
 } = require("../db/seeds/utils.js");
 const connection = require("../db/connection.js");
 
-
 function selectReviewById(review_id) {
   return connection
-    .query(`SELECT * FROM reviews WHERE review_id = $1;`, [review_id])
+    .query(
+      `SELECT r.review_id, r.title, r.designer, r.owner, r.review_img_url, r.review_body, r.category, r.created_at, r.votes, CAST(count(comment_id) as INT) as comment_count FROM reviews r LEFT JOIN comments c on r.review_id = c.review_id WHERE r.review_id = $1 GROUP BY r.review_id;`,
+      [review_id]
+    )
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Resource not found." });

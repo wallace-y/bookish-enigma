@@ -107,7 +107,7 @@ describe("GET /api/reviews/:id - get review by ID", () => {
       .get("/api/reviews/1")
       .expect("Content-Type", "application/json; charset=utf-8");
   });
-  it("Response has the correct properties", () => {
+  it("Response has the correct properties where there are no comments", () => {
     return request(app)
       .get("/api/reviews/1")
       .then((res) => {
@@ -124,6 +124,29 @@ describe("GET /api/reviews/:id - get review by ID", () => {
               "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
             created_at: "2021-01-18T10:00:20.514Z",
             votes: 1,
+            comment_count: 0,
+          })
+        );
+      });
+  });
+  it("Response has the correct properties where there are are comments", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .then((res) => {
+        const review = res.body.review[0];
+        expect(review).toEqual(
+          expect.objectContaining({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 5,
+            comment_count: 3,
           })
         );
       });
@@ -419,7 +442,10 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
-  describe("PATCH  /api/reviews/:review_id - update id", () => {
+
+  
+
+ describe("PATCH  /api/reviews/:review_id - update id", () => {
   const update = { inc_votes: 1 };
   it("Respond with a 202 - accepted update", () => {
     return request(app).patch("/api/reviews/1").send(update).expect(202);
@@ -489,9 +515,8 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-  
-  
-  describe("DELETE /api/comments/:comment_id", () => {
+
+describe("DELETE /api/comments/:comment_id", () => {
   it("😊 responds with a 204 message", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
@@ -512,7 +537,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-
+ 
 describe("GET /api/users", () => {
   it("responds with a status code 200", () => {
     return request(app).get("/api/users").expect(200);
@@ -568,3 +593,5 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+
