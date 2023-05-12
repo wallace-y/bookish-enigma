@@ -2,8 +2,10 @@ const connection = require("../db/connection.js");
 const {
   selectReviewById,
   selectReviews,
+  updateReviewById,
   addComment,
   selectComments,
+  removeComment,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -74,12 +76,39 @@ function getUsers(req, res, next) {
     })
     .catch(next);
 }
+
+function deleteComment(req, res, next) {
+  const { comment_id } = req.params;
+
+  removeComment(comment_id)
+    .then(({rows}) => {
+      const deletedComment = rows; 
+      res.status(204).send({ deletedComment });
+    })
+    .catch(next);
+}
+
+function patchReviewsById(req, res, next) {
+  const { review_id } = req.params;
+  const update = req.body;
+  updateReviewById(review_id, update)
+    .then((review) => {
+      res.status(202).send({ review });
+    })
+    .catch(next);
+}
+
+
+
+
 module.exports = {
   getCategories,
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  patchReviewsById,
   postComment,
   getComments,
   getUsers,
+  deleteComment,
 };

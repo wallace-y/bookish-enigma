@@ -4,9 +4,11 @@ const {
   getAllEndpoints,
   getReviewsById,
   getReviews,
+  patchReviewsById,
   postComment,
   getComments,
   getUsers
+  deleteComment,
 } = require("./controllers/controllers.js");
 const app = express();
 
@@ -17,7 +19,6 @@ app.get("/api", getAllEndpoints);
 
 // category endpoints
 app.get("/api/categories", getCategories);
-
 
 // users endpoints
 app.get("/api/users", getUsers);
@@ -32,9 +33,12 @@ app.get("/api/reviews", getReviews);
 
 //review post endpoints
 app.post("/api/reviews/:review_id/comments", postComment);
+app.patch("/api/reviews/:review_id", patchReviewsById);
+
+//delete endpoints
+app.delete("/api/comments/:comment_id", deleteComment);
 
 //error handling middleware
-
 //handling 404 errors - no available endpoint
 app.use("/api/*", (req, res) => {
   res.status(404).send({ msg: "Page not found." });
@@ -58,7 +62,6 @@ app.use((err, req, res, next) => {
   // respond with an internal server error
   else {
     res.status(500).send({ msg: "Internal Server Error" });
-
   }
 });
 

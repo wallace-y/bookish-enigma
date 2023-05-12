@@ -381,6 +381,101 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
+
+  describe("PATCH  /api/reviews/:review_id - update id", () => {
+  const update = { inc_votes: 1 };
+  it("Respond with a 202 - accepted update", () => {
+    return request(app).patch("/api/reviews/1").send(update).expect(202);
+  });
+  it("Responds with content of the correct type", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(update)
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("Responds with an object of the correctly updated item", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(update)
+      .then((res) => {
+        const review = res.body.review;
+        expect(review).toEqual(
+          expect.objectContaining({
+            review_id: 1,
+            title: "Agricola",
+            category: "euro game",
+            designer: "Uwe Rosenberg",
+            owner: "mallionaire",
+            review_body: "Farmyard fun!",
+            review_img_url:
+              "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+            created_at: "2021-01-18T10:00:20.514Z",
+            votes: 2,
+          })
+        );
+      });
+  });
+  it("DOES NOT update the DB when no parameters are provided", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send()
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Gives a BAD REQUEST status and message when the update object is incomplete", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({ theWrongThing: 1 })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("Gives a resource not found status and message when the id is an invalid number", () => {
+    return request(app)
+      .patch("/api/reviews/999999")
+      .send(update)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found.");
+      });
+  });
+  it("Gives a resource not found status and message when the id is not a number", () => {
+    return request(app)
+      .patch("/api/reviews/bananas")
+      .send(update)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+});
+  
+  
+  describe("DELETE /api/comments/:comment_id", () => {
+  it("😊 responds with a 204 message", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  it("😭 Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .delete("/api/comments/bananas")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("😭 Status: 404, responds with an error message when passed an invalid path", () => {
+    return request(app)
+      .delete("/api/comments/999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Comment not found.");
+      });
+  });
+});
+
 describe("GET /api/users", () => {
   it("responds with a status code 200", () => {
     return request(app).get("/api/users").expect(200);
