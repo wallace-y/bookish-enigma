@@ -8,6 +8,7 @@ const {
   removeComment,
   selectUserByUsername,
   updateCommentById,
+  addReview,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -119,6 +120,15 @@ function patchCommentById(req, res, next) {
     .catch(next);
 }
 
+function postReview(req, res, next) {
+  const review = req.body;
+  addReview(review)
+    .then((review) => {
+      res.status(201).send({ review });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -131,4 +141,5 @@ module.exports = {
   deleteComment,
   getUsersByUsername,
   patchCommentById,
+  postReview,
 };

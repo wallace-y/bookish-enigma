@@ -719,3 +719,181 @@ describe("PATCH  /api/comments/:comment_id - update id", () => {
       });
   });
 });
+
+describe("POST /api/reviews", () => {
+  const newReview = {
+    title: "A great new game",
+    designer: "Mr Potato Head",
+    owner: "mallionaire",
+    review_img_url: "https://placebear.com/700/700",
+    review_body: "What a game!",
+    category: "euro game",
+  };
+
+  it("returns a status code of 201", () => {
+    return request(app).post("/api/reviews").send(newReview).expect(201);
+  });
+  it("is correctly formatted as JSON", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("its responds with the review object", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .then((res) => {
+        const review = res.body.review;
+        expect(review).toEqual(
+          expect.objectContaining({
+            owner: "mallionaire",
+            title: "A great new game",
+            review_body: "What a game!",
+            designer: "Mr Potato Head",
+            category: "euro game",
+            review_img_url: "https://placebear.com/700/700",
+            review_id: 14,
+            votes: 0,
+            comment_count: 0,
+          })
+        );
+
+        expect(review.hasOwnProperty("created_at")).toBe(true);
+      });
+  });
+  it("missing owner field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        title: "A great new game",
+        review_body: "What a game!",
+        designer: "Mr Potato Head",
+        category: "euro game",
+        review_img_url: "https://placebear.com/700/700",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing title field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "mallionaire",
+        review_body: "What a game!",
+        designer: "Mr Potato Head",
+        category: "euro game",
+        review_img_url: "https://placebear.com/700/700",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing review_body field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "mallionaire",
+        title: "A great new game",
+        designer: "Mr Potato Head",
+        category: "euro game",
+        review_img_url: "https://placebear.com/700/700",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing designer field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "mallionaire",
+        title: "A great new game",
+        review_body: "What a game!",
+        category: "euro game",
+        review_img_url: "https://placebear.com/700/700",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing category field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "mallionaire",
+        title: "A great new game",
+        review_body: "What a game!",
+        designer: "Mr Potato Head",
+        review_img_url: "https://placebear.com/700/700",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing review_img_url: responds with default", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "mallionaire",
+        title: "A great new game",
+        review_body: "What a game!",
+        designer: "Mr Potato Head",
+        category: "euro game",
+      })
+      .then((res) => {
+        const review = res.body.review;
+        expect(review).toEqual(
+          expect.objectContaining({
+            owner: "mallionaire",
+            title: "A great new game",
+            review_body: "What a game!",
+            designer: "Mr Potato Head",
+            category: "euro game",
+            review_img_url: "https://placebear.com/700/700",
+            review_id: 14,
+            votes: 0,
+            comment_count: 0,
+          })
+        );
+      });
+  });
+  it("user is not valid: 404 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "paul_blart",
+        title: "A great new game",
+        review_body: "What a game!",
+        designer: "Mr Potato Head",
+        review_img_url: "https://placebear.com/700/700",
+        category: "euro game",
+      })
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("User not found.");
+      });
+  });
+  it("category is not valid: 404 error", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        owner: "mallionaire",
+        title: "A great new game",
+        review_body: "What a game!",
+        designer: "Mr Potato Head",
+        review_img_url: "https://placebear.com/700/700",
+        category: "banana",
+      })
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Category not found.");
+      });
+  });
+});
