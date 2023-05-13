@@ -55,7 +55,7 @@ function postComment(req, res, next) {
   //activate the model
   addComment(review_id, review)
     .then((comment) => {
-      res.status(201).send({ comment });
+      res.status(201).send(comment);
     })
     .catch(next);
 }
