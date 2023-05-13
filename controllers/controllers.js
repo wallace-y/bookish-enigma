@@ -96,7 +96,7 @@ function patchReviewsById(req, res, next) {
   const update = req.body;
   updateReviewById(review_id, update)
     .then((review) => {
-      res.status(202).send({ review });
+      res.status(202).send(review);
     })
     .catch(next);
 }
