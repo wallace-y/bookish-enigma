@@ -1041,3 +1041,56 @@ describe("POST /api/reviews", () => {
       });
   });
 });
+
+describe("POST /api/categories", () => {
+  const newCategory = {
+    slug: "party game",
+    description: "Be the life and soul of the party.",
+  };
+
+  it("returns a status code of 201", () => {
+    return request(app).post("/api/categories").send(newCategory).expect(201);
+  });
+  it("is correctly formatted as JSON", () => {
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect("Content-Type", "application/json; charset=utf-8");
+  });
+  it("its responds with the category object", () => {
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .then((res) => {
+        const category = res.body.category;
+        expect(category).toEqual(
+          expect.objectContaining({
+            slug: "party game",
+            description: "Be the life and soul of the party.",
+          })
+        );
+      });
+  });
+  it("missing slug field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/categories")
+      .send({
+        description: "Be the life and soul of the party.",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+  it("missing description field: handles a malformed body as a 400 error", () => {
+    return request(app)
+      .post("/api/categories")
+      .send({
+        slug: "party game",
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Malformed body.");
+      });
+  });
+});
