@@ -603,7 +603,7 @@ describe("GET /api/users/:username", () => {
     return request(app)
       .get("/api/users/mallionaire")
       .then((res) => {
-        expect(res.body.user).toEqual(
+        expect(res.body).toEqual(
           expect.objectContaining({
             username: "mallionaire",
             name: "haz",
