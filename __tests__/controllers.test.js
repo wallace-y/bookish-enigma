@@ -111,7 +111,7 @@ describe("GET /api/reviews/:id - get review by ID", () => {
     return request(app)
       .get("/api/reviews/1")
       .then((res) => {
-        const review = res.body.review[0];
+        const review = res.body.review;
         expect(review).toEqual(
           expect.objectContaining({
             review_id: 1,
@@ -133,7 +133,7 @@ describe("GET /api/reviews/:id - get review by ID", () => {
     return request(app)
       .get("/api/reviews/2")
       .then((res) => {
-        const review = res.body.review[0];
+        const review = res.body.review;
         expect(review).toEqual(
           expect.objectContaining({
             review_id: 2,
