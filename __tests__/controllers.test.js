@@ -166,8 +166,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
     return request(app)
       .get("/api/reviews")
       .then((res) => {
-        //get all reviews
-        const review = res.body.reviews;
+        const review = res.body;
         review.forEach((review) => {
           expect(review.hasOwnProperty("owner")).toBe(true);
           expect(review.hasOwnProperty("title")).toBe(true);
@@ -187,7 +186,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
       .get("/api/reviews")
       .then((res) => {
         //get all reviews
-        const review = res.body.reviews;
+        const review = res.body;
         review.forEach((review) => {
           expect(typeof review["owner"]).toBe("string");
           expect(typeof review["title"]).toBe("string");
@@ -205,7 +204,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
     return request(app)
       .get("/api/reviews")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("created_at", {
+        expect(res.body).toBeSortedBy("created_at", {
           descending: true,
         });
       });
@@ -214,7 +213,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
     return request(app)
       .get("/api/reviews?sort_by=created_at")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("created_at", {
+        expect(res.body).toBeSortedBy("created_at", {
           descending: true,
         });
       });
@@ -223,8 +222,8 @@ describe("GET /api/reviews - get ALL reviews", () => {
     return request(app)
       .get("/api/reviews?sort_by=created_at&order=ASC")
       .then((res) => {
-        expect(res.body.reviews).toBeSortedBy("created_at");
-        expect(res.body.reviews).toBeSorted({ ascending: true });
+        expect(res.body).toBeSortedBy("created_at");
+        expect(res.body).toBeSorted({ ascending: true });
       });
   });
   it("400 - invalid sort query", () => {
@@ -259,7 +258,7 @@ describe("GET /api/reviews - get ALL reviews", () => {
       .get("/api/reviews?category=children's+games")
       .expect(200)
       .then((res) => {
-        expect(res.body.reviews).toEqual([]);
+        expect(res.body).toEqual([]);
       });
   });
 });
