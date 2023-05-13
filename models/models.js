@@ -69,7 +69,7 @@ function selectReviews(
   }
 
   if (limit) {
-    if (limit == parseInt(limit)) {
+    if (limit == parseInt(limit) && limit > 0) {
       queryStr += ` LIMIT ${limit}`;
     } else {
       return Promise.reject({ status: 400, msg: "Invalid limit query." });
@@ -77,8 +77,8 @@ function selectReviews(
   }
 
   if (p) {
-    if (p == parseInt(p)) {
-      queryStr += ` OFFSET ${p * limit}`;
+    if (p == parseInt(p) && p > 0) {
+      queryStr += ` OFFSET ${(p-1) * limit}`;
     } else {
       return Promise.reject({ status: 400, msg: "Invalid p query." });
     }

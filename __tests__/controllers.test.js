@@ -153,7 +153,7 @@ describe("GET /api/reviews/:id - get review by ID", () => {
   });
 });
 
-describe.only("GET /api/reviews - get ALL reviews", () => {
+describe("GET /api/reviews - get ALL reviews", () => {
   it("returns a status code of 200", () => {
     return request(app).get("/api/reviews").expect(200);
   });
@@ -295,9 +295,41 @@ describe.only("GET /api/reviews - get ALL reviews", () => {
         expect(res.body.msg).toBe("Invalid limit query.");
       });
   });
+  it("400 - invalid limit query where limit is 0", () => {
+    return request(app)
+      .get("/api/reviews?limit=0")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid limit query.");
+      });
+  });
+  it("400 - invalid limit query where limit is negative", () => {
+    return request(app)
+      .get("/api/reviews?limit=-1")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid limit query.");
+      });
+  });
   it("400 - invalid p query where p is not int", () => {
     return request(app)
       .get("/api/reviews?limit=10&p=1.5")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid p query.");
+      });
+  });
+  it("400 - invalid p query where p is 0", () => {
+    return request(app)
+      .get("/api/reviews?limit=10&p=0")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Invalid p query.");
+      });
+  });
+  it("400 - invalid p query where p is less than 0", () => {
+    return request(app)
+      .get("/api/reviews?limit=10&p=-10")
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Invalid p query.");
