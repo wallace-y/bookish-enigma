@@ -375,7 +375,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .post("/api/reviews/1/comments")
       .send(newComment)
       .then((res) => {
-        const comment = res.body.comment.rows[0];
+        const comment = res.body;
         expect(comment).toEqual(
           expect.objectContaining({
             comment_id: 7,
@@ -386,9 +386,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
           })
         );
 
-        expect(res.body.comment.rows[0].hasOwnProperty("created_at")).toBe(
-          true
-        );
+        expect(res.body.hasOwnProperty("created_at")).toBe(true);
       });
   });
   it("missing username: handles a malformed body as a 400 error", () => {

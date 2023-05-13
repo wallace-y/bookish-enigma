@@ -84,7 +84,7 @@ function addComment(review_id, review) {
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Resource not found." });
     } else {
-      return result;
+      return result.rows[0];
     }
   });
 }
