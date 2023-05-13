@@ -62,10 +62,11 @@ function postComment(req, res, next) {
 
 function getComments(req, res, next) {
   const { review_id } = req.params;
+  const { limit, p } = req.query;
 
-  selectComments(review_id)
+  selectComments(review_id, limit, p)
     .then((comments) => {
-      res.status(200).send(comments );
+      res.status(200).send(comments);
     })
     .catch(next);
 }
