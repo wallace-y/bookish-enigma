@@ -17,7 +17,7 @@ function selectReviewById(review_id) {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Resource not found." });
       } else {
-        return rows;
+        return rows[0];
       }
     });
 }
@@ -217,7 +217,7 @@ function addReview(review) {
 
   return Promise.all([validCategories, validUser, addValidReview]).then(
     (result) => {
-      return result[2][0];
+      return result[2];
     }
   );
 }
