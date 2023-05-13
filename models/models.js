@@ -261,6 +261,25 @@ function addReview(review) {
   );
 }
 
+function addCategory(category) {
+  //checks that all required fields exists
+  if (category.slug === undefined || category.description === undefined) {
+    return Promise.reject({ status: 400, msg: "Malformed body." });
+  }
+
+  //formats the review ready to insert into the table
+  const newCategory = [category.slug, category.description];
+
+  const query = format(
+    `INSERT INTO categories (slug,description) VALUES %L RETURNING *;`,
+    [newCategory]
+  );
+
+  return connection.query(query).then((result) => {
+    return result.rows[0];
+  });
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
@@ -271,4 +290,5 @@ module.exports = {
   selectUserByUsername,
   updateCommentById,
   addReview,
+  addCategory,
 };

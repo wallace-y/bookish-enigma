@@ -9,6 +9,7 @@ const {
   selectUserByUsername,
   updateCommentById,
   addReview,
+  addCategory,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -130,6 +131,15 @@ function postReview(req, res, next) {
     .catch(next);
 }
 
+function postCategory(req, res, next) {
+  const category = req.body;
+  addCategory(category)
+    .then((category) => {
+      res.status(201).send({ category });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -143,4 +153,5 @@ module.exports = {
   getUsersByUsername,
   patchCommentById,
   postReview,
+  postCategory,
 };
