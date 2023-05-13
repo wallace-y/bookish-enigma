@@ -455,7 +455,7 @@ describe("PATCH  /api/reviews/:review_id - update id", () => {
       .patch("/api/reviews/1")
       .send(update)
       .then((res) => {
-        const review = res.body.review;
+        const review = res.body;
         expect(review).toEqual(
           expect.objectContaining({
             review_id: 1,
