@@ -1,6 +1,6 @@
 # House of Games API
 
-Link to hosted site [here](https://game-reviews-8ld1.onrender.com).
+Link to hosted site [here](https://game-reviews-8ld1.onrender.com/api).
 
 ## Summary
 
