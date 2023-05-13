@@ -41,8 +41,8 @@ function getReviewsById(req, res, next) {
 }
 
 function getReviews(req, res, next) {
-  const { sort_by, order, category } = req.query;
-  selectReviews(sort_by, order, category)
+  const { sort_by, order, category, limit, p } = req.query;
+  selectReviews(sort_by, order, category, limit, p)
     .then((reviews) => {
       res.status(200).send(reviews);
     })

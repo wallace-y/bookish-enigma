@@ -22,7 +22,13 @@ function selectReviewById(review_id) {
     });
 }
 
-function selectReviews(sort_by = "created_at", order = "DESC", category) {
+function selectReviews(
+  sort_by = "created_at",
+  order = "DESC",
+  category,
+  limit = 10,
+  p
+) {
   const validSortQueries = [
     "review_id",
     "created_at",
@@ -59,10 +65,26 @@ function selectReviews(sort_by = "created_at", order = "DESC", category) {
   }
 
   if (order) {
-    queryStr += ` ${order};`;
-  } else {
-    queryStr += ";";
+    queryStr += ` ${order}`;
   }
+
+  if (limit) {
+    if (limit == parseInt(limit)) {
+      queryStr += ` LIMIT ${limit}`;
+    } else {
+      return Promise.reject({ status: 400, msg: "Invalid limit query." });
+    }
+  }
+
+  if (p) {
+    if (p == parseInt(p)) {
+      queryStr += ` OFFSET ${p * limit}`;
+    } else {
+      return Promise.reject({ status: 400, msg: "Invalid p query." });
+    }
+  }
+
+  queryStr += ";";
 
   const queryReview = connection.query(queryStr, queryValues);
 
