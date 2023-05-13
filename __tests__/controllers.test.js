@@ -277,7 +277,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .get("/api/reviews/1/comments")
       .expect(200)
       .then((res) => {
-        expect(res.body.comments).toEqual([]);
+        expect(res.body).toEqual([]);
       });
   });
   it("Response has the correct properties", () => {
@@ -285,7 +285,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .get("/api/reviews/2/comments")
       .then((res) => {
         //get all reviews
-        const comments = res.body.comments;
+        const comments = res.body;
         if (comments.length > 0) {
           comments.forEach((comment) => {
             expect(comment.hasOwnProperty("comment_id")).toBe(true);
@@ -303,7 +303,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .get("/api/reviews/2/comments")
       .then((res) => {
         //get all reviews
-        const comments = res.body.comments;
+        const comments = res.body;
         if (comments.length > 0) {
           comments.forEach((comment) => {
             expect(typeof comment["comment_id"]).toBe("number");
@@ -320,7 +320,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
     return request(app)
       .get("/api/reviews/2/comments")
       .then((res) => {
-        const comments = res.body.comments;
+        const comments = res.body;
         expect(comments).toEqual(
           expect.objectContaining([
             {

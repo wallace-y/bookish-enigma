@@ -65,7 +65,7 @@ function getComments(req, res, next) {
 
   selectComments(review_id)
     .then((comments) => {
-      res.status(200).send({ comments });
+      res.status(200).send(comments );
     })
     .catch(next);
 }
