@@ -78,7 +78,7 @@ function selectReviews(
 
   if (p) {
     if (p == parseInt(p) && p > 0) {
-      queryStr += ` OFFSET ${(p-1) * limit}`;
+      queryStr += ` OFFSET ${(p - 1) * limit}`;
     } else {
       return Promise.reject({ status: 400, msg: "Invalid p query." });
     }
@@ -111,13 +111,30 @@ function addComment(review_id, review) {
   });
 }
 
-function selectComments(review_id) {
+function selectComments(review_id, limit = 10, p) {
   const checkExists = checkReviewExists(review_id);
-  const query = connection.query(
-    `SELECT comment_id,comments.votes,comments.created_at,comments.author,comments.body,comments.review_id FROM comments WHERE comments.review_id = $1;`,
-    [review_id]
-  );
 
+  const queryValues = [review_id];
+  let queryStr = `SELECT comment_id,comments.votes,comments.created_at,comments.author,comments.body,comments.review_id FROM comments WHERE comments.review_id = $1`;
+
+  if (limit) {
+    if (limit == parseInt(limit) && limit > 0) {
+      queryStr += ` LIMIT ${limit}`;
+    } else {
+      return Promise.reject({ status: 400, msg: "Invalid limit query." });
+    }
+  }
+
+  if (p) {
+    if (p == parseInt(p) && p > 0) {
+      queryStr += ` OFFSET ${(p - 1) * limit}`;
+    } else {
+      return Promise.reject({ status: 400, msg: "Invalid p query." });
+    }
+  }
+
+  queryStr += ";";
+  const query = connection.query(queryStr, queryValues);
   return Promise.all([checkExists, query]).then((result) => {
     return result[1].rows;
   });
