@@ -6,6 +6,7 @@ const {
   postComment,
   patchReviewsById,
   postReview,
+  deleteReview,
 } = require("../controllers/controllers.js");
 
 //get all reviews
@@ -15,6 +16,7 @@ reviewRouter
   .get("/:review_id/comments", getComments)
   .post("/:review_id/comments", postComment)
   .patch("/:review_id", patchReviewsById)
-  .post("/", postReview);
+  .post("/", postReview)
+  .delete("/:review_id", deleteReview);
 
 module.exports = reviewRouter;

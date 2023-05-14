@@ -1094,3 +1094,25 @@ describe("POST /api/categories", () => {
       });
   });
 });
+
+describe("DELETE /api/reviews/:review_id", () => {
+  it("😊 responds with a 204 message", () => {
+    return request(app).delete("/api/reviews/1").expect(204);
+  });
+  it("😭 Status 400, bad request - invalid ID", () => {
+    return request(app)
+      .delete("/api/reviews/bananas")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request.");
+      });
+  });
+  it("😭 Status: 404, responds with an error message when passed an invalid path", () => {
+    return request(app)
+      .delete("/api/reviews/999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Review not found.");
+      });
+  });
+});
