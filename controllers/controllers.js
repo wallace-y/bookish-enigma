@@ -10,6 +10,7 @@ const {
   updateCommentById,
   addReview,
   addCategory,
+  removeReview,
 } = require("../models/models.js");
 const fs = require("fs/promises");
 
@@ -140,6 +141,16 @@ function postCategory(req, res, next) {
     .catch(next);
 }
 
+function deleteReview(req, res, next) {
+  const { review_id } = req.params;
+  removeReview(review_id)
+    .then(({ rows }) => {
+      const deletedReview = rows;
+      res.status(204).send({ deletedReview });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getCategories,
   getAllEndpoints,
@@ -154,4 +165,5 @@ module.exports = {
   patchCommentById,
   postReview,
   postCategory,
+  deleteReview,
 };

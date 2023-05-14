@@ -280,6 +280,16 @@ function addCategory(category) {
   });
 }
 
+function removeReview(review_id) {
+  const checkExists = checkReviewExists(review_id);
+  const query = connection.query(
+    `DELETE FROM reviews WHERE review_id = $1 RETURNING *;`,
+    [review_id]
+  );
+
+  return Promise.all([checkExists, query]);
+}
+
 module.exports = {
   selectReviewById,
   selectReviews,
@@ -291,4 +301,5 @@ module.exports = {
   updateCommentById,
   addReview,
   addCategory,
+  removeReview,
 };
