@@ -37,6 +37,7 @@ function selectReviews(
     "owner",
     "category",
     "votes",
+    "comment_count"
   ];
   const validOrderQueries = ["ASC", "DESC"];
   const validCategories = checkValidCategory(category);
