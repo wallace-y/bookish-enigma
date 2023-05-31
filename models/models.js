@@ -62,7 +62,7 @@ function selectReviews(
   queryStr += ` GROUP BY reviews.review_id`;
 
   if (sort_by) {
-    queryStr += ` ORDER BY reviews.${sort_by}`;
+    queryStr += ` ORDER BY ${sort_by}`;
   }
 
   if (order) {
