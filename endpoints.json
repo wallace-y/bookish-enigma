@@ -5,20 +5,33 @@
   "GET /api/categories": {
     "description": "serves an array of all categories",
     "queries": [],
-    "exampleResponse": {
-      "categories": [
+    "exampleResponse": [
         {
           "description": "Players attempt to uncover each other's hidden role",
           "slug": "Social deduction"
         }
       ]
-    }
+  },
+  "POST /api/categories": {
+    "description": "posts a new category",
+    "keys": 
+      {
+        "slug": "String - required",
+        "description": "String - required"
+      },
+    "exampleResponse": 
+      {
+        "category": {
+          "slug": "Animals",
+          "description": "Animals games involve animals as a major component of the theme or gameplay. Animals games often require players to attend to the management or control of animals. Players may even take on the role of an animal (or animals) in the game."
+        }
+      }
+  
   },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
-    "exampleResponse": {
-      "categories": [
+    "exampleResponse": [
         {
           "username": "mallionaire",
           "name": "haz",
@@ -41,14 +54,23 @@
           "avatar_url":
             "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
         }
-      ]
-    }
+    ]
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of a single user",
+    "queries": [],
+    "exampleResponse": 
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url":
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
   },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
     "queries": ["sort_by","order","category"],
-    "exampleResponse": {
-      "review": [
+    "exampleResponse": [
         {"review_id":14,
         "owner":"cooljmessy",
         "title":"Velit tempor ullamco amet ipsum dolor voluptate.",
@@ -69,7 +91,6 @@
         "designer":"Avery Wunzboogerz",
         "comment_count":3}
       ]
-    }
   },
   "GET /api/reviews/:review_id": {
     "description": "serves an object of a single array",
@@ -79,7 +100,7 @@
   "GET /api/reviews/:review_id/comments": {
     "description": "serves an array of all comments of a particular review",
     "queries": [],
-    "exampleResponse": {"comments":[{"comment_id":59,"votes":3,"created_at":"2021-03-27T19:48:58.110Z","author":"jessjelly","body":"Quis duis mollit ad enim deserunt.","review_id":1},{"comment_id":60,"votes":17,"created_at":"2021-03-27T14:15:38.110Z","author":"cooljmessy","body":"Laboris nostrud ea ex occaecat aute quis consectetur anim.","review_id":1},{"comment_id":61,"votes":1,"created_at":"2021-03-27T14:15:36.110Z","author":"weegembump","body":"Consequat nisi dolor nulla esse sunt eu ipsum laborum deserunt duis. Ffugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat?","review_id":1}]}
+    "exampleResponse": [{"comment_id":59,"votes":3,"created_at":"2021-03-27T19:48:58.110Z","author":"jessjelly","body":"Quis duis mollit ad enim deserunt.","review_id":1},{"comment_id":60,"votes":17,"created_at":"2021-03-27T14:15:38.110Z","author":"cooljmessy","body":"Laboris nostrud ea ex occaecat aute quis consectetur anim.","review_id":1},{"comment_id":61,"votes":1,"created_at":"2021-03-27T14:15:36.110Z","author":"weegembump","body":"Consequat nisi dolor nulla esse sunt eu ipsum laborum deserunt duis. Ffugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat?","review_id":1}]
   },
   "POST /api/reviews/:review_id/comments": {
     "description": "posts a new comment to a specified review",
@@ -97,6 +118,54 @@
         }
       ]
     }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "updates the vote count of a specified review",
+    "keys": {
+      "review_id": "Number required",
+      "inc_votes": "Number required"
+    },
+    "exampleResponse": 
+    {
+      "review_id": 1,
+      "title": "Culture a Love of Agriculture With Agricola",
+      "category": "strategy",
+      "designer": "Uwe Rosenberg",
+      "owner": "tickle122",
+      "review_body": "You could sum up Agricola with the simple phrase 'Farmyard Fun' but the mechanics and game play add so much more than that. You'll find yourself torn between breeding pigs, or sowing crops. Its joyeous and rewarding and it makes you think of time spent outside, which is much harder to do these days!",
+      "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+      "created_at": "2021-01-18T10:00:20.514Z",
+      "votes": "3 <-- incremented by the inc_votes number" 
+    }
+  },
+  "POST /api/reviews": {
+    "description": "posts a new review",
+    "keys": 
+    {
+      "title": "String required",
+      "designer": "String required",
+      "owner": "String required",
+      "review_body": "String required",
+      "category": "String required",
+      "review_img_url": "String"
+    },
+    "exampleResponse": {
+      "review": {
+        "review_id": 25,
+        "title": "This is the best game on earth.",
+        "designer": "Mathias Wigge",
+        "owner": "cooljmessy",
+        "review_img_url": "https://placebear.com/700/700",
+        "review_body": "The hype around this one was hard to ignore. So I was eager to try it out.",
+        "category": "Animals",
+        "created_at": "2023-06-01T08:04:00.982Z",
+        "votes": 0,
+        "comment_count": 0
+      }
+    }
+  },
+  "DELETE /api/reviews/:review_id": {
+    "description": "deletes a review"
   },
   "PATCH /api/reviews/:review_id/comments": {
     "description": "updates a comment of a specified review to increase the vote count",
@@ -119,18 +188,6 @@
     "description": "delete a specified comment",
     "queries": [],
     "exampleResponse": {}
-  },
-  "GET /api/users/:username": {
-    "description": "serves an object of a single user",
-    "queries": [],
-    "exampleResponse": {
-      "user": 
-        {
-          "username": "mallionaire",
-          "name": "haz",
-          "avatar_url":
-            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-        }
-    }
   }
+
 }
